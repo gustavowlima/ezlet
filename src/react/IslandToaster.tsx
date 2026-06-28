@@ -36,6 +36,7 @@ export function IslandToaster({
   classNames,
   icons,
   renderToast,
+  transition,
 }: IslandToasterProps) {
   const toasts = useToasts();
   const [hovered, setHovered] = useState(false);
@@ -44,8 +45,8 @@ export function IslandToaster({
   const verticalSide = getVerticalSide(position);
   // `expand` forces the list open; otherwise hovering expands it.
   const expanded = expand || hovered;
-  const stackTransition = shouldReduceMotion ? reducedMotionTransition : stackSpring;
-  const itemTransition = shouldReduceMotion ? reducedMotionTransition : expandSpring;
+  const stackTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.stack ?? stackSpring);
+  const itemTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.expand ?? expandSpring);
   const visible = useMemo(() => getVisibleToasts(toasts, visibleToasts), [toasts, visibleToasts]);
 
   const reportHeight = useCallback((id: ToastId, height: number) => {
@@ -152,7 +153,10 @@ export function IslandToaster({
             return (
               <motion.div
                 key={item.id}
-                className="it-stack-item"
+                className={cx(
+                  "it-stack-item",
+                  !expanded && index > 0 ? "it-stack-item-collapsed" : "it-stack-item-active",
+                )}
                 initial={{ y: enterY, opacity: 0, scale: 0.6 }}
                 animate={{
                   y: transform.y,
@@ -171,6 +175,7 @@ export function IslandToaster({
                   onHeight={reportHeight}
                   renderToast={renderToast}
                   stacked={index > 0}
+                  transition={transition}
                 />
               </motion.div>
             );

@@ -5,6 +5,7 @@ export type {
   IslandToasterProps,
   ToastAction,
   ToastClassNames,
+  ToasterTransition,
   ToastIconRenderer,
   ToastId,
   ToastListener,

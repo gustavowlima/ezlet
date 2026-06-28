@@ -5,6 +5,7 @@
   --it-border: rgba(255, 255, 255, 0.1);
   --it-shadow: 0 16px 40px rgba(0, 0, 0, 0.22), 0 5px 16px rgba(0, 0, 0, 0.16);
   --it-radius: 999px;
+  --it-width: 356px;
   --it-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --it-success: #34d399;
   --it-error: #fb7185;
@@ -50,31 +51,87 @@
 
 .it-viewport {
   position: relative;
-  width: min(420px, calc(100vw - 32px));
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  justify-items: center;
+  align-items: start;
+  width: auto;
+  max-width: min(420px, calc(100vw - 32px));
   min-height: 56px;
   pointer-events: auto;
   overflow: visible;
+  margin: 0 auto;
+}
+
+.it-top-left .it-viewport,
+.it-bottom-left .it-viewport {
+  justify-items: start;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.it-top-right .it-viewport,
+.it-bottom-right .it-viewport {
+  justify-items: end;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.it-bottom-left .it-viewport,
+.it-bottom-center .it-viewport,
+.it-bottom-right .it-viewport {
+  align-items: end;
 }
 
 .it-stack-item {
-  position: absolute;
-  top: 0;
-  inset-inline: 0;
+  grid-area: 1 / 1 / 2 / 2;
+  min-width: 160px;
+  max-width: 100%;
   transform-origin: top center;
   will-change: transform, opacity;
 }
 
-.it-bottom-left .it-stack-item,
-.it-bottom-center .it-stack-item,
-.it-bottom-right .it-stack-item {
-  top: auto;
-  bottom: 0;
+.it-stack-item-active {
+  width: max-content;
+}
+
+.it-stack-item-collapsed {
+  width: 100%;
+}
+
+.it-top-left .it-stack-item {
+  transform-origin: top left;
+}
+
+.it-top-right .it-stack-item {
+  transform-origin: top right;
+}
+
+.it-bottom-left .it-stack-item {
+  transform-origin: bottom left;
+}
+
+.it-bottom-center .it-stack-item {
   transform-origin: bottom center;
 }
 
+.it-bottom-right .it-stack-item {
+  transform-origin: bottom right;
+}
+
 .it-island-shell {
-  width: 100%;
-  will-change: transform;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--it-radius);
+  will-change: width, height, transform;
+}
+
+.it-island-sizer {
+  width: max-content;
+  max-width: min(420px, calc(100vw - 32px));
 }
 
 /* Dual-layer content morph (Sileo-style). The current layer sits in normal flow
@@ -137,6 +194,7 @@
   grid-template-columns: 30px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 10px;
+  width: min(var(--it-width), calc(100vw - 32px));
   min-height: 56px;
   padding: 10px 12px 10px 14px;
   color: var(--it-fg);

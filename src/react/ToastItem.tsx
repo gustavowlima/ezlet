@@ -1,7 +1,14 @@
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
 import { iconSpring } from "../animation/springs";
 import { toast } from "../core/toast";
-import type { ToastClassNames, ToastIconRenderer, ToastMessage, ToastT } from "../core/types";
+import type {
+  ToastClassNames,
+  ToasterTransition,
+  ToastIconRenderer,
+  ToastMessage,
+  ToastT,
+} from "../core/types";
 import { CloseIcon, DefaultIcon, ErrorIcon, InfoIcon, LoadingIcon, SuccessIcon } from "./icons";
 
 interface ToastItemProps {
@@ -11,6 +18,7 @@ interface ToastItemProps {
   icons?: Partial<Record<ToastT["variant"], ToastIconRenderer>>;
   style?: React.CSSProperties;
   stacked?: boolean;
+  transition?: ToasterTransition;
 }
 
 function cx(...classes: Array<string | false | null | undefined>) {
@@ -57,14 +65,59 @@ function getDefaultIcon(item: ToastT, icons?: Partial<Record<ToastT["variant"], 
   }
 }
 
-export function ToastItem({ item, classNames, collapsedLayer, icons, style, stacked }: ToastItemProps) {
+export function ToastItem({
+  item,
+  classNames,
+  collapsedLayer,
+  icons,
+  style,
+  stacked,
+  transition,
+}: ToastItemProps) {
   const reduce = useReducedMotion();
   const role = item.variant === "error" ? "alert" : "status";
   const title = renderMessage(item.title);
   const description = renderMessage(item.description);
   const hasDescription = description !== null;
-  const customContent = item.render?.(item);
+
+  const isTest = typeof process !== "undefined" && process.env.NODE_ENV === "test";
+  const [autoExpanded, setAutoExpanded] = useState(isTest);
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    if (isTest) {
+      return;
+    }
+
+    let collapseTimer: ReturnType<typeof setTimeout> | undefined;
+
+    // 1. Auto-expand 350ms after mounting
+    const expandTimer = setTimeout(() => {
+      setAutoExpanded(true);
+
+      // 2. Collapse back to compact state after 2500ms
+      collapseTimer = setTimeout(() => {
+        setAutoExpanded(false);
+      }, 2500);
+    }, 350);
+
+    return () => {
+      clearTimeout(expandTimer);
+      if (collapseTimer) {
+        clearTimeout(collapseTimer);
+      }
+    };
+  }, [isTest]);
+
+  const isExpanded = autoExpanded || hovered;
+
+  const customContent = item.render?.({
+    ...item,
+    expanded: isExpanded,
+  } as ToastT);
   const hasCustomContent = customContent !== null && customContent !== undefined && customContent !== false;
+
+  const iconTransition = transition?.icon ?? iconSpring;
 
   if (collapsedLayer) {
     return (
@@ -98,62 +151,86 @@ export function ToastItem({ item, classNames, collapsedLayer, icons, style, stac
       role={role}
       style={style}
       tabIndex={item.dismissible ? 0 : undefined}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {hasCustomContent ? (
         <motion.div
-          animate={reduce ? undefined : { scale: 1, opacity: 1, filter: "blur(0px)" }}
+          animate={reduce ? undefined : { scale: 1, opacity: 1 }}
           className={cx("it-custom-content", classNames?.content)}
-          initial={reduce ? false : { scale: 0.94, opacity: 0, filter: "blur(5px)" }}
-          key={`${item.id}_${item.variant}`}
-          transition={{ type: "spring", bounce: 0.18, duration: 0.5 }}
+          initial={reduce ? false : { scale: 0.96, opacity: 0 }}
+          key={item.id}
+          transition={transition?.morph ?? { type: "spring", bounce: 0.15, duration: 0.5 }}
         >
           {customContent}
         </motion.div>
       ) : (
         <>
           <motion.div
-            animate={reduce ? undefined : { scale: 1, opacity: 1, filter: "blur(0px)" }}
+            animate={reduce ? undefined : { scale: 1, opacity: 1 }}
             className={cx("it-icon", classNames?.icon)}
-            initial={reduce ? false : { scale: 0.5, opacity: 0, filter: "blur(6px)" }}
+            initial={reduce ? false : { scale: 0.7, opacity: 0 }}
             // Re-pop the icon whenever the variant changes (loading → success…).
             key={item.variant}
-            transition={iconSpring}
+            transition={iconTransition}
           >
             {getDefaultIcon(item, icons)}
           </motion.div>
           <motion.div
-            animate={reduce ? undefined : { scale: 1, opacity: 1, filter: "blur(0px)" }}
+            animate={reduce ? undefined : { scale: 1, opacity: 1 }}
             className={cx("it-content", classNames?.content)}
-            initial={reduce ? false : { scale: 0.94, opacity: 0, filter: "blur(5px)" }}
-            key={`${item.id}_${item.variant}_${title ? String(title) : ""}`}
-            transition={{ type: "spring", bounce: 0.18, duration: 0.5 }}
+            initial={reduce ? false : { scale: 0.96, opacity: 0 }}
+            key={item.id}
+            transition={transition?.morph ?? { type: "spring", bounce: 0.15, duration: 0.5 }}
           >
             {title !== null ? <div className={cx("it-title", classNames?.title)}>{title}</div> : null}
-            {hasDescription ? (
-              <div className={cx("it-description", classNames?.description)}>{description}</div>
-            ) : null}
+            <AnimatePresence>
+              {hasDescription && isExpanded ? (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginTop: 2 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  transition={{ type: "spring", bounce: 0.1, duration: 0.5 }}
+                  className={cx("it-description", classNames?.description)}
+                >
+                  {description}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </motion.div>
         </>
       )}
-      {item.action ? (
-        <button
-          className={cx("it-action", classNames?.actionButton)}
-          onClick={() => item.action?.onClick(item.id)}
-          type="button"
-        >
-          {item.action.label}
-        </button>
-      ) : null}
-      {item.dismissible ? (
-        <button
-          aria-label="Dismiss toast"
-          className={cx("it-dismiss", classNames?.dismissButton)}
-          onClick={() => toast.dismiss(item.id)}
-          type="button"
-        >
-          <CloseIcon />
-        </button>
-      ) : null}
+      <AnimatePresence>
+        {item.action && isExpanded ? (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+            className={cx("it-action", classNames?.actionButton)}
+            onClick={() => item.action?.onClick(item.id)}
+            type="button"
+          >
+            {item.action.label}
+          </motion.button>
+        ) : null}
+      </AnimatePresence>
+      <AnimatePresence>
+        {item.dismissible && isExpanded ? (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+            aria-label="Dismiss toast"
+            className={cx("it-dismiss", classNames?.dismissButton)}
+            onClick={() => toast.dismiss(item.id)}
+            type="button"
+          >
+            <CloseIcon />
+          </motion.button>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

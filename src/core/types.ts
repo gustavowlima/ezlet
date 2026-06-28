@@ -1,3 +1,4 @@
+import type { Transition } from "motion/react";
 import type { ReactNode } from "react";
 
 export type ToastId = string | number;
@@ -92,6 +93,13 @@ export interface ToastClassNames {
   dismissButton?: string;
 }
 
+export interface ToasterTransition {
+  morph?: Transition;
+  stack?: Transition;
+  expand?: Transition;
+  icon?: Transition;
+}
+
 export interface IslandToasterProps {
   position?: ToastPosition;
   theme?: ToastTheme;
@@ -104,4 +112,5 @@ export interface IslandToasterProps {
   classNames?: ToastClassNames;
   icons?: Partial<Record<ToastVariant, ToastIconRenderer>>;
   renderToast?: ToastRenderer;
+  transition?: ToasterTransition;
 }
