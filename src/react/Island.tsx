@@ -16,7 +16,15 @@ interface IslandProps {
   onHeight?: (id: ToastId, height: number) => void;
 }
 
-export function Island({ item, classNames, collapsedLayer, icons, renderToast, stacked, onHeight }: IslandProps) {
+export function Island({
+  item,
+  classNames,
+  collapsedLayer,
+  icons,
+  renderToast,
+  stacked,
+  onHeight,
+}: IslandProps) {
   const shouldReduceMotion = useReducedMotion();
   const shellRef = useRef<HTMLDivElement>(null);
 

@@ -66,7 +66,10 @@ export function IslandToaster({
       const next: Record<string, number> = {};
       for (const key of Object.keys(prev)) {
         if (live.has(key)) {
-          next[key] = prev[key];
+          const val = prev[key];
+          if (typeof val === "number") {
+            next[key] = val;
+          }
         } else {
           changed = true;
         }
@@ -90,7 +93,8 @@ export function IslandToaster({
 
   useDocumentVisibilityPause(pauseAll, resumeAll);
 
-  const frontHeight = visible.length > 0 ? heightOf(visible[0].id) : DEFAULT_HEIGHT;
+  const firstVisible = visible[0];
+  const frontHeight = firstVisible ? heightOf(firstVisible.id) : DEFAULT_HEIGHT;
   const totalHeight =
     visible.reduce((sum, item) => sum + heightOf(item.id), 0) + gap * Math.max(visible.length - 1, 0);
   const viewportHeight = expanded ? totalHeight : frontHeight;
@@ -125,7 +129,10 @@ export function IslandToaster({
             // Cumulative measured height of every toast in front of this one.
             let heightBefore = 0;
             for (let i = 0; i < index; i += 1) {
-              heightBefore += heightOf(visible[i].id);
+              const prevItem = visible[i];
+              if (prevItem) {
+                heightBefore += heightOf(prevItem.id);
+              }
             }
 
             const transform = getStackTransform({

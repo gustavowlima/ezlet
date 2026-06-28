@@ -4,7 +4,11 @@ import type { ReactNode, SVGProps } from "react";
  * Lucide-style line icons matching Sileo: 24px grid, round caps, 2px stroke.
  * Color is inherited from the variant (`currentColor`).
  */
-function Icon({ title, children, ...props }: SVGProps<SVGSVGElement> & { title: string; children: ReactNode }) {
+function Icon({
+  title,
+  children,
+  ...props
+}: SVGProps<SVGSVGElement> & { title: string; children: ReactNode }) {
   return (
     <svg
       aria-hidden="true"

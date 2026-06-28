@@ -15,7 +15,14 @@ describe("getStackTransform", () => {
 
   test("collapses behind the front with peek offset and shrinking scale", () => {
     expect(
-      getStackTransform({ index: 1, gap: 14, expanded: false, position: "bottom", heightBefore: 0, peek: 14 }),
+      getStackTransform({
+        index: 1,
+        gap: 14,
+        expanded: false,
+        position: "bottom",
+        heightBefore: 0,
+        peek: 14,
+      }),
     ).toMatchObject({
       opacity: 1,
       scale: 0.94,
@@ -26,7 +33,8 @@ describe("getStackTransform", () => {
 
   test("clamps the collapsed scale floor for deep stacks", () => {
     expect(
-      getStackTransform({ index: 9, gap: 14, expanded: false, position: "top", heightBefore: 0, peek: 14 }).scale,
+      getStackTransform({ index: 9, gap: 14, expanded: false, position: "top", heightBefore: 0, peek: 14 })
+        .scale,
     ).toBe(0.82);
   });
 });

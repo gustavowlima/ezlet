@@ -22,6 +22,11 @@ Object.assign(globalThis, {
   getComputedStyle: window.getComputedStyle.bind(window),
   requestAnimationFrame: (callback: RafCallback) => setTimeout(() => callback(Date.now()), 16),
   cancelAnimationFrame: (id: number) => clearTimeout(id),
+  ResizeObserver: class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  },
 });
 
 if (!window.matchMedia) {

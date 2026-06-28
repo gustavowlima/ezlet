@@ -9,7 +9,16 @@
     }
   },
   "files": {
-    "includes": ["src/**", "test/**", "playground/**", "*.ts", "*.json", "*.toml"]
+    "includes": [
+      "src/**",
+      "test/**",
+      "playground/main.tsx",
+      "playground/playground.css",
+      "playground/server.ts",
+      "*.ts",
+      "*.json",
+      "*.toml"
+    ]
   },
   "formatter": {
     "enabled": true,
