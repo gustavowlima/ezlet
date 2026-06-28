@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { getStackTransform } from "../animation/geometry";
-import { reducedMotionTransition, stackSpring } from "../animation/springs";
+import { expandSpring, reducedMotionTransition, stackSpring } from "../animation/springs";
 import { toast } from "../core/toast";
 import type { IslandToasterProps, ToastId, ToastT } from "../core/types";
 import { useDocumentVisibilityPause, useToasts } from "./hooks";
@@ -45,6 +45,7 @@ export function IslandToaster({
   // `expand` forces the list open; otherwise hovering expands it.
   const expanded = expand || hovered;
   const stackTransition = shouldReduceMotion ? reducedMotionTransition : stackSpring;
+  const itemTransition = shouldReduceMotion ? reducedMotionTransition : expandSpring;
   const visible = useMemo(() => getVisibleToasts(toasts, visibleToasts), [toasts, visibleToasts]);
 
   const reportHeight = useCallback((id: ToastId, height: number) => {
@@ -136,24 +137,24 @@ export function IslandToaster({
               peek: PEEK,
             });
 
-            // Subtle Sileo-style entry/exit: small nudge from the anchored edge
-            // + scale 0.95 + fade. The pushing-back of older toasts does the
-            // rest of the motion.
-            const enterY = transform.y + (verticalSide === "top" ? -6 : 6);
+            // Dynamic Island "expand": the pill grows out of the anchored edge
+            // (transform-origin top/bottom) from scale 0.6, with a small nudge +
+            // fade, and collapses back the same way on exit.
+            const enterY = transform.y + (verticalSide === "top" ? -8 : 8);
 
             return (
               <motion.div
                 key={item.id}
                 className="it-stack-item"
-                initial={{ y: enterY, opacity: 0, scale: 0.95 }}
+                initial={{ y: enterY, opacity: 0, scale: 0.6 }}
                 animate={{
                   y: transform.y,
                   opacity: transform.opacity,
                   scale: transform.scale,
                 }}
-                exit={{ y: enterY, opacity: 0, scale: 0.95 }}
+                exit={{ y: enterY, opacity: 0, scale: 0.6 }}
                 style={{ zIndex: transform.zIndex }}
-                transition={stackTransition}
+                transition={itemTransition}
               >
                 <Island
                   classNames={classNames}

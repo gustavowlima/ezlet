@@ -15,7 +15,14 @@ export const morphSpring: Transition = {
 /** Stack/list repositioning when toasts are added, removed, or expanded. */
 export const stackSpring: Transition = {
   type: "spring",
-  bounce: 0.2,
+  bounce: 0.18,
+  duration: 0.5,
+};
+
+/** Entry/exit "expand" of the pill growing out of (and collapsing back to) the edge. */
+export const expandSpring: Transition = {
+  type: "spring",
+  bounce: 0.3,
   duration: 0.55,
 };
 
