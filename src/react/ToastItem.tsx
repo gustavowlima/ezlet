@@ -100,25 +100,39 @@ export function ToastItem({ item, classNames, collapsedLayer, icons, style, stac
       tabIndex={item.dismissible ? 0 : undefined}
     >
       {hasCustomContent ? (
-        <div className={cx("it-custom-content", classNames?.content)}>{customContent}</div>
+        <motion.div
+          animate={reduce ? undefined : { scale: 1, opacity: 1, filter: "blur(0px)" }}
+          className={cx("it-custom-content", classNames?.content)}
+          initial={reduce ? false : { scale: 0.94, opacity: 0, filter: "blur(5px)" }}
+          key={`${item.id}_${item.variant}`}
+          transition={{ type: "spring", bounce: 0.18, duration: 0.5 }}
+        >
+          {customContent}
+        </motion.div>
       ) : (
         <>
           <motion.div
-            animate={reduce ? undefined : { scale: 1, opacity: 1 }}
+            animate={reduce ? undefined : { scale: 1, opacity: 1, filter: "blur(0px)" }}
             className={cx("it-icon", classNames?.icon)}
-            initial={reduce ? false : { scale: 0.3, opacity: 0 }}
+            initial={reduce ? false : { scale: 0.5, opacity: 0, filter: "blur(6px)" }}
             // Re-pop the icon whenever the variant changes (loading → success…).
             key={item.variant}
             transition={iconSpring}
           >
             {getDefaultIcon(item, icons)}
           </motion.div>
-          <div className={cx("it-content", classNames?.content)}>
+          <motion.div
+            animate={reduce ? undefined : { scale: 1, opacity: 1, filter: "blur(0px)" }}
+            className={cx("it-content", classNames?.content)}
+            initial={reduce ? false : { scale: 0.94, opacity: 0, filter: "blur(5px)" }}
+            key={`${item.id}_${item.variant}_${title ? String(title) : ""}`}
+            transition={{ type: "spring", bounce: 0.18, duration: 0.5 }}
+          >
             {title !== null ? <div className={cx("it-title", classNames?.title)}>{title}</div> : null}
             {hasDescription ? (
               <div className={cx("it-description", classNames?.description)}>{description}</div>
             ) : null}
-          </div>
+          </motion.div>
         </>
       )}
       {item.action ? (

@@ -295,6 +295,8 @@ function App() {
     },
   ];
 
+  const toasterTheme = resolvedTheme === "dark" ? "light" : "dark";
+
   return (
     <div className="flex-1 flex flex-col justify-between max-w-4xl w-full mx-auto px-6">
       {/* ─── Navbar ────────────────────────────────────────────────────────── */}
@@ -512,7 +514,7 @@ function App() {
       <IslandToaster
         expand={expanded}
         position={position}
-        theme={theme}
+        theme={toasterTheme}
         visibleToasts={visibleToasts}
         gap={gap}
         offset={offset}
