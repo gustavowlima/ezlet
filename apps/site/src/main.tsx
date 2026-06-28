@@ -1,7 +1,3 @@
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
-import type { Root } from "react-dom/client";
-import { createRoot } from "react-dom/client";
 import {
   Toaster,
   type ToasterTransition,
@@ -9,14 +5,10 @@ import {
   type ToastT,
   type ToastTheme,
   toast,
-} from "../src";
-import "./playground.css";
-
-declare global {
-  interface Window {
-    __ezletRoot?: Root;
-  }
-}
+} from "ezlet";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
+import "./styles.css";
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
@@ -127,7 +119,7 @@ const softnessPresets: Record<string, ToasterTransition> = {
 
 // ─── App ─────────────────────────────────────────────────────────────────────
 
-function App() {
+export function App() {
   const [position, setPosition] = useState<ToastPosition>("top-center");
   const [theme, setTheme] = useState<ToastTheme>("dark");
   const [expanded, setExpanded] = useState(false);
@@ -571,11 +563,3 @@ function ProgressBar({ value, speed, color }: { value: number; speed: string; co
     </div>
   );
 }
-
-// ─── Mount ────────────────────────────────────────────────────────────────────
-
-const rootElement = document.getElementById("root");
-if (!rootElement) throw new Error("Missing #root element");
-
-window.__ezletRoot ??= createRoot(rootElement);
-window.__ezletRoot.render(<App />);

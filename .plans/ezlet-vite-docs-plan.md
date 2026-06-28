@@ -1,9 +1,10 @@
-# Plano: Ezlet — biblioteca + playground/docs Vite 8
+# Plano: Ezlet monorepo — biblioteca + website Vite 8
 
 ## Objetivo
 
-Evoluir o projeto **Ezlet**, uma biblioteca React de toasts com
-animação Dynamic Island fluida, stacking tipo Sonner e um site/playground/documentação completo.
+Evoluir o projeto **Ezlet** como um monorepo com a biblioteca React publicada no npm e um
+website Vite para docs, playground e validação visual.
+
 O playground deixa de ser só uma tela de botões e passa a ser um **workspace de documentação e
 validação visual**, inspirado na qualidade visual do Sileo Play, mas com identidade própria.
 
@@ -12,14 +13,32 @@ validação visual**, inspirado na qualidade visual do Sileo Play, mas com ident
 - **Nome público:** `Ezlet`.
 - **Package name:** preferir `ezlet`; antes de publicar, verificar disponibilidade no npm. Se
   indisponível, usar escopo (`@<scope>/ezlet`) sem mudar a marca.
+- **Repo:** `https://github.com/gustavowlima/ezlet`.
+- **API pública:** `import { Toaster, toast } from "ezlet"`. Não manter aliases antigos porque
+  a lib ainda não foi publicada.
 - **Biblioteca:** React + Motion, build com `tsdown`, testes com `bun test`.
-- **Docs/playground:** Vite 8 + React + TypeScript.
-  - Context7 confirmou Vite `v8.0.10` e template React TS com `vite`, `@vitejs/plugin-react`,
-    React 19, TS bundler mode e scripts `dev/build/preview`.
+- **Monorepo:** usar `apps/site` para o website e `packages/ezlet` para a lib.
+- **Workspace manager:** Bun workspaces no root.
+- **Publicação npm:** workflow em GitHub Actions disparado por `release.published`.
+  - `package.json` não pode ter `private: true`.
+  - `files` deve publicar só artefatos necessários (`dist` e README), sem testes/fontes internos
+    no tarball.
+  - Workflow deve rodar install frozen, lint, typecheck, tests, build e `npm pack --dry-run`
+    antes de publicar.
+  - Workflow deve falhar se a tag da release não bater com `package.json.version`.
+  - Publicação token-based usa `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}`.
+  - Publicação com provenance deve declarar `permissions: id-token: write` e usar
+    `npm publish --provenance`.
+  - Depois do primeiro publish, avaliar migrar para npm Trusted Publishing e remover
+    `NPM_TOKEN`.
+- **Website/docs:** Vite 8 + React + TypeScript.
+  - Context7 confirmou Vite 8 com scripts `vite`, `vite build`, `vite preview`.
+  - Context7 confirmou config React TS com `@vitejs/plugin-react`.
 - **Routing:** TanStack Router.
   - Context7 confirmou suporte nativo a View Transitions via `defaultViewTransition?: boolean |
     ViewTransitionOptions` no `createRouter`.
-  - O router do site deve usar `defaultViewTransition: true`.
+  - O router do site deve usar `defaultViewTransition: true`; se o browser não suportar
+    `document.startViewTransition()`, o TanStack Router ignora a opção sem quebrar navegação.
   - Navegações internas devem usar `<Link />` e `useNavigate()` do TanStack Router, não estado
     local ad hoc, para páginas/sections passarem pelo mesmo pipeline de transição.
 - **View Transitions no site:** obrigatórias para docs/playground.
@@ -34,52 +53,63 @@ validação visual**, inspirado na qualidade visual do Sileo Play, mas com ident
     customizar perfeitamente.
   - O site/docs pode usar Tailwind v4 via `@tailwindcss/vite`.
   - Context7 confirmou Tailwind v4 com `@import "tailwindcss"` e plugin `@tailwindcss/vite`.
+- **Dogfooding no site:** o app de docs importa `ezlet` por alias de Vite apontando para
+  `packages/ezlet/src/index.ts` durante dev local, não por paths internos. Os snippets continuam
+  mostrando o import real do pacote.
 
 ## Arquitetura Alvo
 
 ```txt
 ezlet/
-├─ package.json
-├─ tsdown.config.ts
-├─ vite.config.ts                  # docs/playground Vite 8
-├─ index.html                      # docs app
-├─ src/
-│  ├─ index.ts                     # API pública da lib
-│  ├─ core/
-│  ├─ react/
-│  ├─ animation/
-│  └─ styles/
-│     └─ ezlet.css                 # CSS base da lib
-├─ docs/
-│  ├─ app/
-│  │  ├─ main.tsx
-│  │  ├─ App.tsx
-│  │  ├─ router.tsx                  # TanStack Router + defaultViewTransition
-│  │  ├─ routes.tsx                  # rotas code-first
-│  │  └─ styles.css                # Tailwind v4 + design tokens docs
-│  ├─ components/
-│  │  ├─ Shell.tsx
-│  │  ├─ Sidebar.tsx
-│  │  ├─ Topbar.tsx
-│  │  ├─ CodeBlock.tsx
-│  │  ├─ PropTable.tsx
-│  │  ├─ DemoFrame.tsx
-│  │  └─ Workspace.tsx
-│  ├─ pages/
-│  │  ├─ Home.tsx
-│  │  ├─ Docs.tsx
-│  │  ├─ API.tsx
-│  │  ├─ Styling.tsx
-│  │  ├─ Accessibility.tsx
-│  │  └─ Playground.tsx
-│  └─ examples/
-│     ├─ BasicDemo.tsx
-│     ├─ PromiseDemo.tsx
-│     ├─ StackingDemo.tsx
-│     ├─ TailwindDemo.tsx
-│     └─ CustomRenderDemo.tsx
+├─ package.json                    # root workspace + scripts de alto nível
+├─ bun.lock
+├─ apps/
+│  └─ site/
+│     ├─ index.html                # Vite root
+│     ├─ package.json              # website
+│     ├─ vite.config.ts            # Vite 8 + router + Tailwind
+│     └─ src/
+│        ├─ main.tsx               # RouterProvider
+│        ├─ router.tsx             # TanStack Router + defaultViewTransition
+│        ├─ routes.tsx             # rotas code-first
+│        ├─ route-state.ts         # parse/serialize de search params do workspace
+│        ├─ styles.css            # @import "tailwindcss" + design tokens docs
+│        ├─ components/
+│        ├─ pages/
+│        └─ examples/
+├─ packages/
+│  └─ ezlet/
+│     ├─ package.json              # lib publicável no npm
+│     ├─ tsdown.config.ts
+│     ├─ src/
+│     │  ├─ index.ts               # API pública da lib
+│     │  ├─ core/
+│     │  ├─ react/
+│     │  ├─ animation/
+│     │  └─ styles/
+│     │     └─ ezlet.css           # CSS base da lib
+│     └─ README.md
+├─ .github/
+│  └─ workflows/
+│     ├─ publish.yml               # release -> npm publish
+│     └─ site-deploy.yml           # push/main -> deploy website
 └─ README.md
 ```
+
+### Vite Config Alvo
+
+- `apps/site/vite.config.ts` deve usar:
+  - `react()` de `@vitejs/plugin-react`;
+  - `tailwindcss()` de `@tailwindcss/vite`;
+  - `root: "."`;
+  - `build.outDir: "../../site-dist"`;
+  - alias `ezlet` para `../../packages/ezlet/src/index.ts`, garantindo que o site consome a API
+    pública em dev local.
+- Scripts:
+  - `site:dev`: `vite --host 127.0.0.1`;
+  - `site:build`: `vite build`;
+  - `site:preview`: `vite preview`;
+  - `build`: build da lib com `tsdown`, sem virar build do site.
 
 ## Design System do Site
 
@@ -126,6 +156,8 @@ ezlet/
   - payload/title/description/action.
 - **Preview:** área limpa onde os toasts aparecem como apareceriam em uma aplicação real.
 - **Code output:** snippet atualizado conforme os controles.
+- **Sem landing genérica:** a primeira viewport já deve ser uma experiência usável com preview,
+  controles e snippet. Marketing fica subordinado à demonstração real.
 
 ## Compatibilidade Tailwind da Lib
 
@@ -142,7 +174,6 @@ ezlet/
   - `classNames`
   - `unstyled?: boolean`
   - `injectStyles?: boolean`
-  - `toastOptions`
   - `renderToast`
   - `icons`
   - CSS variables.
@@ -208,13 +239,33 @@ ezlet/
 
 ## Tasks
 
-### Task 1 — Preparar Vite 8 Docs
+### Task 0 — Estado Atual Da Lib
 
-- [ ] Instalar `vite@^8`, `@vitejs/plugin-react`, `@tailwindcss/vite`, `tailwindcss`.
-- [ ] Instalar `@tanstack/react-router`.
-- [ ] Criar `vite.config.ts` com React + Tailwind.
-- [ ] Criar TanStack Router com `defaultViewTransition: true`.
-- [ ] Criar rotas:
+- [x] Package renomeado para `ezlet`.
+- [x] API pública limpa: `Toaster`, `ToasterProps`, `toast`.
+- [x] Sem alias legado para nomes antigos.
+- [x] CSS base em `packages/ezlet/src/styles/ezlet.css`.
+- [x] Estilos automáticos por `injectStyles`, sem import manual obrigatório.
+- [x] `unstyled` para Tailwind-only.
+- [x] Prefixos estáveis `.ezlet-*`, `--ezlet-*`, `data-ezlet-*`.
+- [x] Testes Bun cobrindo portal, style injection, `unstyled`, stacking e core.
+- [x] Build da lib com `tsdown` e export `./styles.css`.
+- [x] `files` do npm restrito a `dist` e `README.md`.
+- [x] Metadados npm básicos: description, license, repository, homepage, bugs e keywords.
+- [x] Workflow inicial de publish em `.github/workflows/publish.yml`.
+
+### Task 1 — Estruturar Monorepo
+
+- [x] Criar root `package.json` com workspaces Bun.
+- [x] Mover a lib para `packages/ezlet`.
+- [x] Mover o website para `apps/site`.
+- [x] Ajustar scripts raiz para `build`, `test`, `lint`, `typecheck`, `site:dev`,
+  `site:build` e `site:preview`.
+- [x] Criar `apps/site/package.json` com dependência local em `ezlet` via workspace.
+- [x] Criar `apps/site/index.html`.
+- [x] Criar `apps/site/vite.config.ts` com React + Tailwind e alias local para `packages/ezlet`.
+- [x] Criar TanStack Router com `defaultViewTransition: true`.
+- [x] Criar rotas:
   - `/`
   - `/docs`
   - `/docs/installation`
@@ -224,17 +275,14 @@ ezlet/
   - `/docs/accessibility`
   - `/docs/api`
   - `/play`
-- [ ] Trocar `bun run dev` para Vite docs app.
-- [ ] Adicionar scripts:
-  - `dev`: `vite`
-  - `docs:build`: `vite build`
-  - `docs:preview`: `vite preview`
-  - manter `build` da lib com `tsdown`.
-- [ ] Mover playground Bun antigo para `docs/` ou remover após paridade.
+- [x] Criar workflow de deploy do site separado do publish da lib.
+- [x] Manter o playground Bun antigo até a paridade visual do novo `/play`.
+- [x] Remover `playground/server.ts` e `playground/index.html` após a paridade.
 
 ### Task 2 — Criar Design System do Site
 
-- [ ] Criar `docs/app/styles.css` com `@import "tailwindcss"` e tokens DS.
+- [ ] Criar `apps/site/src/styles.css` com `@import "tailwindcss"` e tokens DS.
+- [ ] Importar `apps/site/src/styles.css` em `apps/site/src/main.tsx`.
 - [ ] Criar layout base `Shell`, `Sidebar`, `Topbar`, `Workspace`.
 - [ ] Criar navegação com TanStack Router:
   - links ativos por rota;
@@ -260,6 +308,9 @@ ezlet/
 
 - [ ] Home com Ezlet real funcionando na primeira viewport.
 - [ ] Workspace central com controles reais.
+- [ ] Usar `import { Toaster, toast } from "ezlet"` no código do site.
+- [ ] Não importar `ezlet/styles.css` no fluxo padrão; deixar `Toaster` injetar estilos.
+- [ ] Criar exemplo separado demonstrando `injectStyles={false}` + CSS manual.
 - [ ] Preview isolado, com botões:
   - Default
   - Success
@@ -275,6 +326,7 @@ ezlet/
   - `visibleToasts`
   - `expand`
   - preset.
+- [ ] Search params devem ter defaults previsíveis e não gerar URLs ruidosas.
 - [ ] Presets visuais:
   - Minimal
   - Glassless
@@ -285,14 +337,25 @@ ezlet/
 ### Task 4 — Docs
 
 - [ ] Página `Installation`.
+  - Instalação Bun/npm/pnpm.
+  - Uso padrão sem CSS import.
+  - Import manual de `ezlet/styles.css` apenas como opção avançada.
 - [ ] Página `Usage`.
+  - `toast()`, variantes, dismiss, update.
 - [ ] Página `Promise`.
+  - `toast.promise()` reutilizando id e morph loading -> success/error.
 - [ ] Página `Stacking`.
+  - `visibleToasts`, `gap`, `expand`, hover, limite visual.
 - [ ] Página `Styling`.
+  - CSS vars `--ezlet-*`, `classNames`, `injectStyles={false}`.
 - [ ] Página `Tailwind`.
+  - `unstyled`, utilities, tokens via arbitrary properties.
 - [ ] Página `Accessibility`.
+  - `role=status|alert`, `aria-live`, keyboard dismiss, reduced motion.
 - [ ] Página `API`.
+  - `ToasterProps`, `ToastOptions`, `ToastT`, `ToasterTransition`.
 - [ ] Página `Motion`.
+  - Por que Motion no toast e View Transitions no site.
 
 ### Task 5 — API Ezlet + Tailwind
 
@@ -300,12 +363,13 @@ ezlet/
 - [x] Adicionar `unstyled`.
 - [x] Adicionar/estabilizar `data-*` attributes.
 - [x] Renomear tokens CSS para `--ezlet-*`.
-- [ ] Garantir que `classNames` sempre vence estilos default quando possível.
+- [ ] Auditar se `classNames` vence estilos default nos slots principais.
 - [ ] Documentar ordem de customização:
   1. CSS vars
   2. `classNames`
   3. `unstyled`
   4. `renderToast`
+- [ ] Adicionar exemplos copiáveis para cada camada.
 
 ### Task 6 — Validação Visual
 
@@ -322,23 +386,67 @@ ezlet/
 - [ ] Conferir texto sem overflow em mobile.
 - [ ] Conferir stack com `visibleToasts=3` e rajadas.
 - [ ] Conferir reduced motion.
+- [ ] Conferir que nenhum layout depende de texto explicativo para operar os controles.
 
 ### Task 7 — Build/Qualidade
 
-- [ ] `bun test`
-- [ ] `bun run typecheck`
-- [ ] `bun run lint`
-- [ ] `bun run build`
-- [ ] `bun run docs:build`
-- [ ] `bun run docs:preview`
+- [x] `bun test`
+- [x] `bun run typecheck`
+- [x] `bun run lint`
+- [x] `bun run build`
+- [x] `bun run site:build`
+- [ ] `bun run site:preview`
 - [ ] Validar `exports`:
   - `.`
   - `./styles.css`
-- [ ] Validar import em app Vite local.
+- [ ] Validar import em app Vite local via alias `ezlet`.
+- [ ] Validar que snippets da docs não usam paths internos (`../src`, `src/react/*`).
+- [ ] Rodar busca final por nomes antigos:
+  - `IslandToaster`
+  - `Islet`
+  - `EzletToaster`
+  - `island-toast`
+  - `.it-*`
+  - `--it-*`
+- [ ] Atualizar os comandos de validação para o fluxo Bun do monorepo:
+  - `bun --cwd packages/ezlet test`
+  - `bun --cwd packages/ezlet run build`
+  - `bun --cwd packages/ezlet run typecheck`
+  - `bun --cwd apps/site run build`
+  - `bun --cwd apps/site run typecheck`
+
+### Task 8 — Release E Publish npm
+
+- [x] Configurar repo metadata para `https://github.com/gustavowlima/ezlet`.
+- [x] Remover `private: true` antes de publicar.
+- [x] Criar workflow `Publish to npm` em release published.
+- [x] Usar `bun install --frozen-lockfile`.
+- [x] Rodar lint, typecheck, tests e build antes do publish.
+- [x] Validar que tag da release corresponde a `package.json.version`.
+- [x] Rodar `npm pack --dry-run` para validar conteúdo empacotado.
+- [x] Publicar com `npm publish --provenance --access public`.
+- [ ] Criar secret `NPM_TOKEN` no GitHub repo se usar token-based publish.
+- [ ] Garantir que o token npm tenha permissão de publish para o pacote `ezlet`.
+- [ ] Atualizar `package.json.version` antes da release.
+- [ ] Criar release GitHub com tag que corresponda ao `version` do `package.json`
+  (`v1.2.3` ou `1.2.3`).
+- [ ] Após primeiro publish, considerar npm Trusted Publishing:
+  - configurar trusted publisher no npm para `gustavowlima/ezlet`;
+  - manter `permissions: id-token: write`;
+  - remover `NODE_AUTH_TOKEN` e `NPM_TOKEN` do workflow.
+- [ ] Antes da primeira release pública, confirmar disponibilidade do nome `ezlet` no npm.
+
+### Task 9 — CI/CD Do Website
+
+- [x] Criar workflow `site-deploy.yml` para deploy do website em `push` na branch principal.
+- [x] Restringir o deploy do site para mudanças em `apps/site/**`, `packages/ezlet/**` e workflows.
+- [x] Fazer o build do site publicar a partir de `apps/site`.
+- [ ] Validar que docs e playground não disparam publish da lib.
+- [ ] Validar que mudanças só de docs não alteram `package.json.version`.
 
 ## Critérios de Aceite
 
-- Docs Vite 8 abre com `bun run dev`.
+- Website Vite 8 abre com `bun run site:dev`.
 - Docs/playground usam TanStack Router com `defaultViewTransition: true`.
 - Navegações do site usam View Transitions, com fallback limpo em browsers sem suporte.
 - Site tem home, docs e workspace real.
@@ -348,3 +456,8 @@ ezlet/
 - Build da lib e build das docs passam.
 - Nenhum erro de console no Playwright.
 - README usa o nome Ezlet e aponta para a nova API.
+- Snippets principais usam `import { Toaster, toast } from "ezlet"`.
+- O site dogfooda a API pública via alias Vite, sem paths internos da lib.
+- Release publicada no GitHub dispara workflow npm somente depois de lint/typecheck/test/build.
+- `npm pack --dry-run` lista apenas arquivos esperados: `dist`, `package.json` e `README.md`.
+- Deploy do site e publish da lib são workflows independentes.
