@@ -1,5 +1,5 @@
 {
-  "name": "island-toast",
+  "name": "ezlet",
   "version": "0.0.0",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,14 +23,15 @@
     }
   },
   "scripts": {
-    "build": "tsdown && cp src/styles/island-toast.css dist/styles.css",
+    "build": "bun run styles:generate && tsdown && cp src/styles/ezlet.css dist/styles.css",
     "check": "biome check .",
     "dev": "bun --hot playground/server.ts",
     "format": "biome check --write .",
     "lint": "biome check .",
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "styles:generate": "bun scripts/generate-style-module.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",

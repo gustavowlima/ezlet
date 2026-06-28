@@ -2,16 +2,16 @@ import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { morphSpring, reducedMotionTransition } from "../animation/springs";
 import { toast } from "../core/toast";
-import type { IslandToasterProps, ToastClassNames, ToasterTransition, ToastId, ToastT } from "../core/types";
+import type { ToastClassNames, ToasterProps, ToasterTransition, ToastId, ToastT } from "../core/types";
 import { MorphContent } from "./MorphContent";
 import { ToastItem } from "./ToastItem";
 
-interface IslandProps {
+interface EzletProps {
   item: ToastT;
   classNames?: ToastClassNames;
   collapsedLayer?: boolean;
-  icons?: IslandToasterProps["icons"];
-  renderToast?: IslandToasterProps["renderToast"];
+  icons?: ToasterProps["icons"];
+  renderToast?: ToasterProps["renderToast"];
   stacked?: boolean;
   onHeight?: (id: ToastId, height: number) => void;
   transition?: ToasterTransition;
@@ -56,7 +56,7 @@ function useMeasuredSize() {
   return [ref, size] as const;
 }
 
-export function Island({
+export function Ezlet({
   item,
   classNames,
   collapsedLayer,
@@ -65,7 +65,7 @@ export function Island({
   stacked,
   onHeight,
   transition,
-}: IslandProps) {
+}: EzletProps) {
   const shouldReduceMotion = useReducedMotion();
   const shellRef = useRef<HTMLDivElement>(null);
   const [sizerRef, size] = useMeasuredSize();
@@ -89,7 +89,7 @@ export function Island({
   return (
     <motion.div
       ref={shellRef}
-      className="it-island-shell"
+      className="ezlet-shell"
       drag={item.dismissible && !stacked ? "x" : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.18}
@@ -102,7 +102,7 @@ export function Island({
       }}
       transition={layoutTransition}
     >
-      <div ref={sizerRef} className="it-island-sizer">
+      <div ref={sizerRef} className="ezlet-sizer">
         <MorphContent contentKey={contentKey} reduceMotion={shouldReduceMotion ?? false}>
           {renderToast && !collapsedLayer ? (
             renderToast(item)

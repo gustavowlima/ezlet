@@ -1,12 +1,13 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useInsertionEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { getStackTransform } from "../animation/geometry";
 import { expandSpring, reducedMotionTransition, stackSpring } from "../animation/springs";
 import { toast } from "../core/toast";
-import type { IslandToasterProps, ToastId, ToastT } from "../core/types";
+import type { ToasterProps, ToastId, ToastT } from "../core/types";
+import { ensureEzletStyles } from "../styles/inject-styles";
+import { Ezlet } from "./Ezlet";
 import { useDocumentVisibilityPause, useToasts } from "./hooks";
-import { Island } from "./Island";
 
 /** Visible offset of each collapsed card sitting behind the front one. */
 const PEEK = 14;
@@ -17,7 +18,7 @@ function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
-function getVerticalSide(position: NonNullable<IslandToasterProps["position"]>) {
+function getVerticalSide(position: NonNullable<ToasterProps["position"]>) {
   return position.startsWith("bottom") ? "bottom" : "top";
 }
 
@@ -25,19 +26,21 @@ function getVisibleToasts(toasts: readonly ToastT[], limit: number) {
   return toasts.filter((item) => item.status === "visible").slice(0, limit);
 }
 
-export function IslandToaster({
+export function Toaster({
   position = "top-center",
   theme = "system",
   visibleToasts = 3,
   expand,
   gap = 14,
   offset = 16,
+  injectStyles = true,
+  unstyled,
   className,
   classNames,
   icons,
   renderToast,
   transition,
-}: IslandToasterProps) {
+}: ToasterProps) {
   const toasts = useToasts();
   const [hovered, setHovered] = useState(false);
   const [heights, setHeights] = useState<Record<string, number>>({});
@@ -48,6 +51,12 @@ export function IslandToaster({
   const stackTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.stack ?? stackSpring);
   const itemTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.expand ?? expandSpring);
   const visible = useMemo(() => getVisibleToasts(toasts, visibleToasts), [toasts, visibleToasts]);
+
+  useInsertionEffect(() => {
+    if (injectStyles && !unstyled) {
+      ensureEzletStyles();
+    }
+  }, [injectStyles, unstyled]);
 
   const reportHeight = useCallback((id: ToastId, height: number) => {
     setHeights((prev) => {
@@ -106,9 +115,17 @@ export function IslandToaster({
 
   return createPortal(
     <section
-      className={cx("it-toaster", `it-${position}`, `it-theme-${theme}`, className, classNames?.toaster)}
+      className={cx(
+        "ezlet-toaster",
+        `ezlet-${position}`,
+        `ezlet-theme-${theme}`,
+        className,
+        classNames?.toaster,
+      )}
       data-expanded={expanded ? "true" : "false"}
+      data-ezlet-toaster=""
       data-position={position}
+      data-unstyled={unstyled ? "true" : "false"}
       onMouseEnter={() => {
         setHovered(true);
         pauseAll();
@@ -118,10 +135,11 @@ export function IslandToaster({
         resumeAll();
       }}
       aria-label="Notifications"
-      style={{ "--it-offset": `${offset}px` } as React.CSSProperties}
+      style={{ "--ezlet-offset": `${offset}px` } as React.CSSProperties}
     >
       <motion.div
-        className={cx("it-viewport", classNames?.viewport)}
+        className={cx("ezlet-viewport", classNames?.viewport)}
+        data-ezlet-viewport=""
         animate={{ height: viewportHeight }}
         transition={stackTransition}
       >
@@ -145,7 +163,7 @@ export function IslandToaster({
               peek: PEEK,
             });
 
-            // Dynamic Island "expand": the pill grows out of the anchored edge
+            // Dynamic Island-style expand: the pill grows out of the anchored edge
             // (transform-origin top/bottom) from scale 0.6, with a small nudge +
             // fade, and collapses back the same way on exit.
             const enterY = transform.y + (verticalSide === "top" ? -8 : 8);
@@ -154,8 +172,8 @@ export function IslandToaster({
               <motion.div
                 key={item.id}
                 className={cx(
-                  "it-stack-item",
-                  !expanded && index > 0 ? "it-stack-item-collapsed" : "it-stack-item-active",
+                  "ezlet-stack-item",
+                  !expanded && index > 0 ? "ezlet-stack-item-collapsed" : "ezlet-stack-item-active",
                 )}
                 initial={{ y: enterY, opacity: 0, scale: 0.6 }}
                 animate={{
@@ -164,10 +182,12 @@ export function IslandToaster({
                   scale: transform.scale,
                 }}
                 exit={{ y: enterY, opacity: 0, scale: 0.6 }}
+                data-front={index === 0 ? "true" : "false"}
+                data-stack-index={index}
                 style={{ zIndex: transform.zIndex }}
                 transition={itemTransition}
               >
-                <Island
+                <Ezlet
                   classNames={classNames}
                   collapsedLayer={!expanded && index > 0}
                   icons={icons}

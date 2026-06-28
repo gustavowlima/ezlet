@@ -2,15 +2,16 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "bun:test";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { resetToastCounterForTests, toastStore } from "../core/store";
 import { clearToastTimersForTests, toast } from "../core/toast";
-import { IslandToaster } from "./IslandToaster";
+import { Toaster } from "./Toaster";
 
-describe("IslandToaster", () => {
+describe("Toaster", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     clearToastTimersForTests();
     toastStore.clear();
     resetToastCounterForTests();
     document.body.innerHTML = "";
+    document.head.querySelector("#ezlet-styles")?.remove();
   });
 
   afterEach(() => {
@@ -21,7 +22,7 @@ describe("IslandToaster", () => {
   });
 
   test("renders visible toasts through a document.body portal", () => {
-    render(<IslandToaster />);
+    render(<Toaster />);
 
     act(() => {
       toast.success("Saved", { description: "Everything is synced" });
@@ -30,11 +31,49 @@ describe("IslandToaster", () => {
     expect(screen.getByText("Saved")).toBeTruthy();
     expect(screen.getByText("Everything is synced")).toBeTruthy();
     expect(screen.getByRole("status")).toBeTruthy();
-    expect(document.body.querySelector(".it-toaster")).toBeTruthy();
+    expect(document.body.querySelector(".ezlet-toaster")).toBeTruthy();
+    expect(document.body.querySelector("[data-ezlet-toaster]")).toBeTruthy();
+    expect(document.body.querySelector("[data-ezlet-viewport]")).toBeTruthy();
+    expect(document.body.querySelector("[data-ezlet-toast]")).toBeTruthy();
+  });
+
+  test("injects base styles once by default", () => {
+    const { rerender } = render(<Toaster />);
+
+    act(() => {
+      toast("Styled");
+    });
+
+    expect(document.head.querySelectorAll("#ezlet-styles")).toHaveLength(1);
+
+    rerender(<Toaster position="bottom-right" />);
+
+    expect(document.head.querySelectorAll("#ezlet-styles")).toHaveLength(1);
+  });
+
+  test("can skip automatic style injection", () => {
+    render(<Toaster injectStyles={false} />);
+
+    act(() => {
+      toast("Manual styles");
+    });
+
+    expect(document.head.querySelector("#ezlet-styles")).toBeNull();
+  });
+
+  test("unstyled mode skips automatic style injection", () => {
+    render(<Toaster unstyled />);
+
+    act(() => {
+      toast("Tailwind only");
+    });
+
+    expect(document.head.querySelector("#ezlet-styles")).toBeNull();
+    expect(document.body.querySelector("[data-unstyled='true']")).toBeTruthy();
   });
 
   test("uses alert role for errors", () => {
-    render(<IslandToaster />);
+    render(<Toaster />);
 
     act(() => {
       toast.error("Failed");
@@ -44,7 +83,7 @@ describe("IslandToaster", () => {
   });
 
   test("dismisses a toast from the dismiss button", () => {
-    render(<IslandToaster />);
+    render(<Toaster />);
 
     act(() => {
       toast("Dismiss me");
@@ -63,7 +102,7 @@ describe("IslandToaster", () => {
   });
 
   test("limits visible toasts and collapses stacked content", () => {
-    render(<IslandToaster visibleToasts={2} />);
+    render(<Toaster visibleToasts={2} />);
 
     act(() => {
       toast("One");
@@ -74,11 +113,12 @@ describe("IslandToaster", () => {
     expect(screen.getByText("Three")).toBeTruthy();
     expect(screen.queryByText("Two")).toBeNull();
     expect(screen.queryByText("One")).toBeNull();
-    expect(document.body.querySelectorAll(".it-stack-item")).toHaveLength(2);
+    expect(document.body.querySelectorAll(".ezlet-stack-item")).toHaveLength(2);
+    expect(document.body.querySelector("[data-stack-index='0'][data-front='true']")).toBeTruthy();
   });
 
   test("shows stacked content when expanded", () => {
-    render(<IslandToaster expand visibleToasts={2} />);
+    render(<Toaster expand visibleToasts={2} />);
 
     act(() => {
       toast("One");
@@ -92,13 +132,13 @@ describe("IslandToaster", () => {
   });
 
   test("pauses timers on hover and resumes on leave", () => {
-    render(<IslandToaster />);
+    render(<Toaster />);
 
     act(() => {
       toast("Hover", { duration: 1000 });
     });
 
-    const toaster = document.body.querySelector(".it-toaster");
+    const toaster = document.body.querySelector(".ezlet-toaster");
     expect(toaster).toBeTruthy();
 
     act(() => {
@@ -124,7 +164,7 @@ describe("IslandToaster", () => {
   });
 
   test("renders custom toast content", () => {
-    render(<IslandToaster />);
+    render(<Toaster />);
 
     act(() => {
       toast.custom((item) => <strong>Custom {item.id}</strong>);
@@ -134,7 +174,7 @@ describe("IslandToaster", () => {
   });
 
   test("supports renderToast override", () => {
-    render(<IslandToaster renderToast={(item) => <div role="status">Override {item.title}</div>} />);
+    render(<Toaster renderToast={(item) => <div role="status">Override {item.title}</div>} />);
 
     act(() => {
       toast.success("Saved");
@@ -144,7 +184,7 @@ describe("IslandToaster", () => {
   });
 
   test("supports icon overrides", () => {
-    render(<IslandToaster icons={{ success: <span data-testid="success-icon">ok</span> }} />);
+    render(<Toaster icons={{ success: <span data-testid="success-icon">ok</span> }} />);
 
     act(() => {
       toast.success("Saved");
@@ -154,7 +194,7 @@ describe("IslandToaster", () => {
   });
 
   test("dismisses focused toast with Escape", () => {
-    render(<IslandToaster />);
+    render(<Toaster />);
 
     act(() => {
       toast("Keyboard");

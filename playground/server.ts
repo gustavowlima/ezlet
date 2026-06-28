@@ -15,4 +15,4 @@ const server = Bun.serve({
   },
 });
 
-console.log(`Island Toast playground running at ${server.url}`);
+console.log(`Ezlet playground running at ${server.url}`);

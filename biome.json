@@ -12,6 +12,7 @@
     "includes": [
       "src/**",
       "test/**",
+      "scripts/**",
       "playground/main.tsx",
       "playground/playground.css",
       "playground/server.ts",

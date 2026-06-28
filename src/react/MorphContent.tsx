@@ -55,12 +55,15 @@ export function MorphContent({ contentKey, children, reduceMotion }: MorphConten
   const animateCurrent = !firstMount.current && !reduceMotion;
 
   return (
-    <div className="it-morph">
-      <div className={animateCurrent ? "it-morph-layer it-morph-enter" : "it-morph-layer"} key={currentKey}>
+    <div className="ezlet-morph">
+      <div
+        className={animateCurrent ? "ezlet-morph-layer ezlet-morph-enter" : "ezlet-morph-layer"}
+        key={currentKey}
+      >
         {children}
       </div>
       {prev ? (
-        <div aria-hidden="true" className="it-morph-layer it-morph-exit" key={prev.key}>
+        <div aria-hidden="true" className="ezlet-morph-layer ezlet-morph-exit" key={prev.key}>
           {prev.node}
         </div>
       ) : null}

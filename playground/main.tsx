@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { Root } from "react-dom/client";
 import { createRoot } from "react-dom/client";
 import {
-  IslandToaster,
+  Toaster,
   type ToasterTransition,
   type ToastPosition,
   type ToastT,
@@ -14,7 +14,7 @@ import "./playground.css";
 
 declare global {
   interface Window {
-    __islandToastRoot?: Root;
+    __ezletRoot?: Root;
   }
 }
 
@@ -222,7 +222,7 @@ function App() {
     setTimeout(
       () =>
         toast.success("Backup complete", {
-          description: "Island morphs without freezing.",
+          description: "Ezlet morphs without freezing.",
           duration: 15_000,
         }),
       120,
@@ -364,7 +364,7 @@ function App() {
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-5 border-b border-white/[0.05]">
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-[15px] tracking-tight">island-toast</span>
+          <span className="font-semibold text-[15px] tracking-tight">ezlet</span>
           <span className="size-[6px] rounded-full bg-[#34d399] shadow-[0_0_6px_#34d399]" />
         </div>
         <a
@@ -386,7 +386,7 @@ function App() {
               Playground.
             </h1>
             <p className="text-[15px] text-white/35 leading-relaxed">
-              Dynamic Island–style toasts. Morphing pill, spring physics, Sonner stacking.
+              Dynamic Island-style toasts. Morphing pill, spring physics, Sonner stacking.
             </p>
           </header>
 
@@ -494,7 +494,7 @@ function App() {
         </div>
       </main>
 
-      <IslandToaster
+      <Toaster
         expand={expanded}
         position={position}
         theme={theme}
@@ -577,5 +577,5 @@ function ProgressBar({ value, speed, color }: { value: number; speed: string; co
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Missing #root element");
 
-window.__islandToastRoot ??= createRoot(rootElement);
-window.__islandToastRoot.render(<App />);
+window.__ezletRoot ??= createRoot(rootElement);
+window.__ezletRoot.render(<App />);

@@ -123,7 +123,8 @@ export function ToastItem({
     return (
       <div
         aria-hidden="true"
-        className={cx("it-toast", "it-toast-layer", `it-toast-${item.variant}`, classNames?.toast)}
+        className={cx("ezlet-toast", "ezlet-toast-layer", `ezlet-toast-${item.variant}`, classNames?.toast)}
+        data-ezlet-toast=""
         data-status={item.status}
         data-variant={item.variant}
         style={style}
@@ -135,7 +136,13 @@ export function ToastItem({
     // biome-ignore lint/a11y/noStaticElementInteractions: Toast regions are focusable so keyboard users can dismiss them.
     <div
       aria-live={item.variant === "error" ? "assertive" : "polite"}
-      className={cx("it-toast", `it-toast-${item.variant}`, stacked && "it-toast-stacked", classNames?.toast)}
+      className={cx(
+        "ezlet-toast",
+        `ezlet-toast-${item.variant}`,
+        stacked && "ezlet-toast-stacked",
+        classNames?.toast,
+      )}
+      data-ezlet-toast=""
       data-status={item.status}
       data-variant={item.variant}
       onKeyDown={(event) => {
@@ -157,7 +164,7 @@ export function ToastItem({
       {hasCustomContent ? (
         <motion.div
           animate={reduce ? undefined : { scale: 1, opacity: 1 }}
-          className={cx("it-custom-content", classNames?.content)}
+          className={cx("ezlet-custom-content", classNames?.content)}
           initial={reduce ? false : { scale: 0.96, opacity: 0 }}
           key={item.id}
           transition={transition?.morph ?? { type: "spring", bounce: 0.15, duration: 0.5 }}
@@ -168,7 +175,7 @@ export function ToastItem({
         <>
           <motion.div
             animate={reduce ? undefined : { scale: 1, opacity: 1 }}
-            className={cx("it-icon", classNames?.icon)}
+            className={cx("ezlet-icon", classNames?.icon)}
             initial={reduce ? false : { scale: 0.7, opacity: 0 }}
             // Re-pop the icon whenever the variant changes (loading → success…).
             key={item.variant}
@@ -178,12 +185,12 @@ export function ToastItem({
           </motion.div>
           <motion.div
             animate={reduce ? undefined : { scale: 1, opacity: 1 }}
-            className={cx("it-content", classNames?.content)}
+            className={cx("ezlet-content", classNames?.content)}
             initial={reduce ? false : { scale: 0.96, opacity: 0 }}
             key={item.id}
             transition={transition?.morph ?? { type: "spring", bounce: 0.15, duration: 0.5 }}
           >
-            {title !== null ? <div className={cx("it-title", classNames?.title)}>{title}</div> : null}
+            {title !== null ? <div className={cx("ezlet-title", classNames?.title)}>{title}</div> : null}
             <AnimatePresence>
               {hasDescription && isExpanded ? (
                 <motion.div
@@ -191,7 +198,7 @@ export function ToastItem({
                   animate={{ opacity: 1, height: "auto", marginTop: 2 }}
                   exit={{ opacity: 0, height: 0, marginTop: 0 }}
                   transition={{ type: "spring", bounce: 0.1, duration: 0.5 }}
-                  className={cx("it-description", classNames?.description)}
+                  className={cx("ezlet-description", classNames?.description)}
                 >
                   {description}
                 </motion.div>
@@ -207,7 +214,7 @@ export function ToastItem({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
-            className={cx("it-action", classNames?.actionButton)}
+            className={cx("ezlet-action", classNames?.actionButton)}
             onClick={() => item.action?.onClick(item.id)}
             type="button"
           >
@@ -223,7 +230,7 @@ export function ToastItem({
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
             aria-label="Dismiss toast"
-            className={cx("it-dismiss", classNames?.dismissButton)}
+            className={cx("ezlet-dismiss", classNames?.dismissButton)}
             onClick={() => toast.dismiss(item.id)}
             type="button"
           >

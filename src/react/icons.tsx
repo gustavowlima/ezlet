@@ -12,7 +12,7 @@ function Icon({
   return (
     <svg
       aria-hidden="true"
-      className="it-icon-svg"
+      className="ezlet-icon-svg"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -58,7 +58,7 @@ export function InfoIcon() {
 
 export function LoadingIcon() {
   return (
-    <Icon className="it-icon-svg it-icon-spin" title="Loading">
+    <Icon className="ezlet-icon-svg ezlet-icon-spin" title="Loading">
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </Icon>
   );

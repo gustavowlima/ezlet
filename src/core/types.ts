@@ -100,7 +100,7 @@ export interface ToasterTransition {
   icon?: Transition;
 }
 
-export interface IslandToasterProps {
+export interface ToasterProps {
   position?: ToastPosition;
   theme?: ToastTheme;
   visibleToasts?: number;
@@ -108,6 +108,8 @@ export interface IslandToasterProps {
   gap?: number;
   offset?: number;
   duration?: number;
+  injectStyles?: boolean;
+  unstyled?: boolean;
   className?: string;
   classNames?: ToastClassNames;
   icons?: Partial<Record<ToastVariant, ToastIconRenderer>>;

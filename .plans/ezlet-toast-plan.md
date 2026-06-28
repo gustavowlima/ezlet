@@ -1,8 +1,8 @@
-# Plano: `island-toast` — toast React com animação estilo Dynamic Island
+# Plano: `ezlet` — toast React com animação estilo Dynamic Island
 
 ## Context
 
-Criar do zero (`/Volumes/Gustavo_SSD/dev/island-toast`, diretório vazio) uma biblioteca de
+Criar do zero (`/Volumes/Gustavo_SSD/dev/ezlet`, diretório vazio) uma biblioteca de
 toasts para **React** cujo diferencial é o **morph fluido** inspirado na Dynamic Island do
 iPhone: uma "pílula" única que muda de tamanho/forma com física de mola (spring), conteúdo
 que troca suavemente e **empilhamento (stacking)** no estilo Sonner. Deve ser bonita
@@ -43,25 +43,25 @@ viável na prática.
 
 ## Arquitetura
 
-Pacote único `island-toast` (publicável), com separação interna clara entre *core* (estado,
+Pacote único `ezlet` (publicável), com separação interna clara entre *core* (estado,
 API imperativa, sem JSX) e *react* (componentes/morph). Facilita extrair um `core` agnóstico
 depois sem reescrever lógica.
 
 ```
-island-toast/
+ezlet/
 ├─ package.json            # bun, "type":"module", exports "." + "./styles.css", peer react
 ├─ tsconfig.json
 ├─ tsdown.config.ts        # build ESM + .d.ts (rolldown, Bun-friendly)
 ├─ biome.json              # lint/format (rápido, Bun-friendly)
 ├─ src/
-│  ├─ index.ts             # API pública: toast, IslandToaster, tipos
+│  ├─ index.ts             # API pública: toast, Toaster, tipos
 │  ├─ core/
 │  │  ├─ store.ts          # store externo + useSyncExternalStore (sem re-render por context)
 │  │  ├─ toast.ts          # API imperativa: toast(), .success/.error/.loading/.promise/.custom/.update/.dismiss
 │  │  ├─ timers.ts         # auto-dismiss com pause-on-hover / pause-on-blur
-│  │  └─ types.ts          # ToastT, Position, Theme, SpringPreset, IslandToasterProps
+│  │  └─ types.ts          # ToastT, Position, Theme, SpringPreset, ToasterProps
 │  ├─ react/
-│  │  ├─ IslandToaster.tsx # portal (createPortal→body), região aria-live, posiciona a ilha, mapeia stack
+│  │  ├─ Toaster.tsx # portal (createPortal→body), região aria-live, posiciona a ilha, mapeia stack
 │  │  ├─ Island.tsx        # pílula que faz morph (motion layout + layoutId="island")
 │  │  ├─ ToastItem.tsx     # item: ícone/variante, conteúdo, ações, AnimatePresence interno
 │  │  ├─ hooks.ts          # useToasts(), useReducedMotion(), useExpanded()
@@ -70,7 +70,7 @@ island-toast/
 │  │  ├─ springs.ts        # presets iOS: morph/enter/exit (stiffness/damping/mass)
 │  │  └─ geometry.ts       # math do stacking estilo Sonner (offset/scale/opacity/blur)
 │  └─ styles/
-│     ├─ island-toast.css  # tokens (CSS vars) + layout base + dark/light
+│     ├─ ezlet.css  # tokens (CSS vars) + layout base + dark/light
 │     └─ variants.css      # cores por variante (success/error/loading/info/custom)
 ├─ playground/             # app Vite+React p/ testar visualmente (bun run dev)
 └─ README.md
@@ -95,7 +95,7 @@ island-toast/
 - `springs.ts` morph preset inicial: `{ type:"spring", stiffness:400, damping:32, mass:1 }`
   (tunável por prop). `will-change:transform` ligado só durante a animação.
 
-### 3. Stacking estilo Sonner (`animation/geometry.ts` + `IslandToaster.tsx`)
+### 3. Stacking estilo Sonner (`animation/geometry.ts` + `Toaster.tsx`)
 - Toasts atrás empilham com `translateY` + `scale` decrescente + opacidade/blur — **só
   transform/opacity** (composto na GPU).
 - `visibleToasts` (default 3) limita nós vivos; demais ficam colapsados.
@@ -103,9 +103,9 @@ island-toast/
   cada item para sua posição. Front toast = "ilha ativa".
 
 ### 4. Estilo e customização
-- Tokens CSS: `--it-bg --it-fg --it-radius --it-blur --it-shadow --it-gap --it-width
-  --it-font` + por-variante `--it-success/-error/-loading/-info`.
-- Props de `<IslandToaster>`: `position` (default `top-center`), `theme` (`light|dark|system`),
+- Tokens CSS: `--ezlet-bg --ezlet-fg --ezlet-radius --ezlet-blur --ezlet-shadow --ezlet-gap --ezlet-width
+  --ezlet-font` + por-variante `--ezlet-success/-error/-loading/-info`.
+- Props de `<Toaster>`: `position` (default `top-center`), `theme` (`light|dark|system`),
   `expand`, `visibleToasts`, `gap`, `offset`, `duration`, `transition`/`springs`, `icons`,
   `classNames` (slots: toaster/toast/title/description/icon/actionButton), `toastOptions`.
 - Slots de render: `toast.custom((id)=>JSX)`, `icon` por toast, `render` override.
@@ -159,7 +159,7 @@ island-toast/
 - [x] Adicionar testes explícitos de callbacks `onDismiss`/`onAutoClose` e remoção em lote.
 
 ### Task 4 — Render base React
-- [x] `IslandToaster`: portal para `document.body`, regiões `aria-live`, posições e subscribe via
+- [x] `Toaster`: portal para `document.body`, regiões `aria-live`, posições e subscribe via
   `useSyncExternalStore`.
 - [x] `ToastItem`: render estático styled, ações, botão dismiss e roles `status|alert`.
 - [x] Testes DOM com `bun test` + `happy-dom` via preload.
@@ -183,7 +183,7 @@ island-toast/
 - [x] Manter toasts dismissed montados por curto delay para permitir exit animation antes de remover.
 
 ### Task 7 — Customização e estilos
-- [x] CSS tokens e variantes iniciais: `--it-bg`, `--it-fg`, radius, shadow, font e cores.
+- [x] CSS tokens e variantes iniciais: `--ezlet-bg`, `--ezlet-fg`, radius, shadow, font e cores.
 - [x] `theme=light|dark|system` e `classNames` iniciais.
 - [x] Exportar `./styles.css`.
 - [x] Finalizar `icons` e render/custom slots.

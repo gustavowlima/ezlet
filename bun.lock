@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "island-toast",
+      "name": "ezlet",
       "dependencies": {
         "motion": "^12.42.0",
       },

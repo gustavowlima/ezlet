@@ -27,6 +27,6 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": ["src", "test", "playground", "bunfig.toml", "tsdown.config.ts"],
+  "include": ["src", "test", "playground", "scripts", "bunfig.toml", "tsdown.config.ts"],
   "exclude": ["dist", "node_modules"]
 }

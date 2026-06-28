@@ -2,9 +2,9 @@ export { createToastStore, resetToastCounterForTests, toastStore } from "./core/
 export { PausableTimer } from "./core/timers";
 export { clearToastTimersForTests, toast } from "./core/toast";
 export type {
-  IslandToasterProps,
   ToastAction,
   ToastClassNames,
+  ToasterProps,
   ToasterTransition,
   ToastIconRenderer,
   ToastId,
@@ -21,4 +21,4 @@ export type {
   ToastUpdateOptions,
   ToastVariant,
 } from "./core/types";
-export { IslandToaster } from "./react/IslandToaster";
+export { Toaster } from "./react/Toaster";
