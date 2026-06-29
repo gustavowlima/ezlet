@@ -144,7 +144,6 @@ export function App() {
   function downloadDemo() {
     const id = toast.loading("Requesting server…", {
       description: "Connecting for database.sql…",
-      icon: <CircularProgress value={0} />,
     });
     let p = 0;
     const iv = setInterval(() => {
@@ -156,7 +155,6 @@ export function App() {
           description: "database.sql is ready.",
           variant: "success",
           duration: 5000,
-          icon: undefined,
           action: {
             label: "Open File",
             onClick: () => {
@@ -168,7 +166,6 @@ export function App() {
       } else {
         toast.update(id, {
           title: "Downloading database.sql",
-          icon: <CircularProgress value={p} />,
           description: <ProgressBar value={p} speed="4.8 MB/s" color="bg-indigo-500" />,
         });
       }
@@ -452,12 +449,10 @@ toast.update(id, {
       fn: downloadDemo,
       code: `const id = toast.loading("Requesting server…", {
   description: "Connecting for database.sql…",
-  icon: <CircularProgress value={0} />,
 });
 
 toast.update(id, {
   title: "Downloading database.sql",
-  icon: <CircularProgress value={45} />,
   description: <ProgressBar value={45} speed="4.8 MB/s" color="bg-indigo-500" />,
 });
 
@@ -465,7 +460,6 @@ toast.update(id, {
   title: "Download complete!",
   description: "database.sql is ready.",
   variant: "success",
-  icon: undefined,
   action: {
     label: "Open File",
     onClick: () => toast.dismiss(id),
@@ -942,43 +936,6 @@ function SliderCard({
         </span>
       </div>
       <RangeSlider value={value} min={min} max={max} step={1} onValueChange={onChange} aria-label={label} />
-    </div>
-  );
-}
-
-function CircularProgress({ value, color = "stroke-indigo-500" }: { value: number; color?: string }) {
-  const radius = 12;
-  const circumference = 2 * Math.PI * radius;
-
-  return (
-    <div className="relative flex items-center justify-center size-8 shrink-0">
-      <svg className="size-full -rotate-90" viewBox="0 0 32 32">
-        <circle
-          cx="16"
-          cy="16"
-          r={radius}
-          stroke="currentColor"
-          strokeWidth="2.5"
-          fill="transparent"
-          className="text-white/5"
-        />
-        <motion.circle
-          cx="16"
-          cy="16"
-          r={radius}
-          stroke="currentColor"
-          strokeWidth="2.5"
-          fill="transparent"
-          strokeDasharray={circumference}
-          animate={{ strokeDashoffset: circumference - (value / 100) * circumference }}
-          transition={{ type: "spring", bounce: 0, duration: 0.8 }}
-          strokeLinecap="round"
-          className={color}
-        />
-      </svg>
-      <span className="absolute text-[8px] font-medium text-white/50 leading-none tabular-nums">
-        {Math.round(value)}%
-      </span>
     </div>
   );
 }

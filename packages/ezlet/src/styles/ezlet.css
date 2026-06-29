@@ -235,11 +235,15 @@
   grid-column: 1 / -1;
 }
 
-.ezlet-title,
-.ezlet-description {
+.ezlet-title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ezlet-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ezlet-title {

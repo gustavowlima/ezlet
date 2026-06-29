@@ -126,17 +126,7 @@ export function Ezlet({
   }, [size]);
 
   const baseTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.morph ?? morphSpring);
-  const activeTransition = isFirstSize.current
-    ? ({ type: "tween", duration: 0 } as const)
-    : expanded
-      ? {
-          width: baseTransition,
-          height: { ...baseTransition, delay: 0.15 },
-        }
-      : {
-          height: baseTransition,
-          width: { ...baseTransition, delay: 0.15 },
-        };
+  const activeTransition = isFirstSize.current ? ({ type: "tween", duration: 0 } as const) : baseTransition;
   const contentKey = `${item.variant}:${collapsedLayer ? "layer" : "full"}`;
 
   return (
