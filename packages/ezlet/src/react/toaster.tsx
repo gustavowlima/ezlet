@@ -6,7 +6,7 @@ import { expandSpring, reducedMotionTransition, stackSpring } from "../animation
 import { toast } from "../core/toast";
 import type { ToasterProps, ToastId, ToastT } from "../core/types";
 import { ensureEzletStyles } from "../styles/inject-styles";
-import { Ezlet } from "./Ezlet";
+import { Ezlet } from "./ezlet";
 import { useDocumentVisibilityPause, useToasts } from "./hooks";
 
 /** Visible offset of each collapsed card sitting behind the front one. */
@@ -14,9 +14,7 @@ const PEEK = 14;
 /** Fallback height before a toast has been measured. */
 const DEFAULT_HEIGHT = 56;
 
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(" ");
-}
+import { cx } from "../styles/utils";
 
 function getVerticalSide(position: NonNullable<ToasterProps["position"]>) {
   return position.startsWith("bottom") ? "bottom" : "top";
@@ -71,24 +69,30 @@ export function Toaster({
   // Drop heights for toasts that are no longer rendered so the map can't grow forever.
   useEffect(() => {
     setHeights((prev) => {
-      const live = new Set(toasts.map((item) => String(item.id)));
-      let changed = false;
+      const liveIds = new Set(toasts.map((item) => String(item.id)));
+      const prevIds = Object.keys(prev);
+
+      if (prevIds.every((id) => liveIds.has(id)) && prevIds.length === liveIds.size) {
+        return prev;
+      }
+
       const next: Record<string, number> = {};
-      for (const key of Object.keys(prev)) {
-        if (live.has(key)) {
-          const val = prev[key];
-          if (typeof val === "number") {
-            next[key] = val;
-          }
-        } else {
-          changed = true;
+      for (const id of liveIds) {
+        const val = prev[id];
+        if (typeof val === "number") {
+          next[id] = val;
         }
       }
-      return changed ? next : prev;
+      return next;
     });
   }, [toasts]);
 
   const heightOf = useCallback((id: ToastId) => heights[String(id)] ?? DEFAULT_HEIGHT, [heights]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: heightOf is a stable callback here that depends on heights
+  const totalHeight = useMemo(() => {
+    return visible.reduce((sum, item) => sum + heightOf(item.id), 0) + gap * Math.max(visible.length - 1, 0);
+  }, [visible, heightOf, gap]);
 
   const pauseAll = useCallback(() => {
     for (const item of visible) {
@@ -105,8 +109,6 @@ export function Toaster({
 
   const firstVisible = visible[0];
   const frontHeight = firstVisible ? heightOf(firstVisible.id) : DEFAULT_HEIGHT;
-  const totalHeight =
-    visible.reduce((sum, item) => sum + heightOf(item.id), 0) + gap * Math.max(visible.length - 1, 0);
   const viewportHeight = expanded ? totalHeight : frontHeight;
 
   if (typeof document === "undefined" || toasts.length === 0) {

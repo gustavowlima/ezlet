@@ -36,7 +36,7 @@ describe("toast api", () => {
       variant: "custom",
       duration: 1000,
     });
-    expect(item?.render?.(item)).toBe(`Custom ${id}`);
+    expect(item?.render?.({ ...item, expanded: true })).toBe(`Custom ${id}`);
   });
 
   test("auto dismisses after duration", () => {
