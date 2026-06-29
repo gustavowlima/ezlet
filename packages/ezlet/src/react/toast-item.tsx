@@ -65,7 +65,7 @@ interface ToastItemProps {
   stacked?: boolean;
   transition?: ToasterTransition;
   expanded?: boolean;
-  hovered?: boolean;
+  expandedContentVisible?: boolean;
 }
 
 export function ToastItem({
@@ -77,7 +77,7 @@ export function ToastItem({
   stacked,
   transition,
   expanded = false,
-  hovered = false,
+  expandedContentVisible = false,
 }: ToastItemProps) {
   const reduce = useReducedMotion();
   const role = item.variant === "error" ? "alert" : "status";
@@ -85,6 +85,7 @@ export function ToastItem({
   const description = renderMessage(item.description);
   const hasDescription = description !== null;
   const isExpanded = expanded;
+  const revealExpandedContent = reduce || expandedContentVisible;
 
   const customContent = item.render?.({
     ...item,
@@ -168,11 +169,30 @@ export function ToastItem({
             <AnimatePresence>
               {hasDescription && isExpanded ? (
                 <motion.div
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginTop: 2 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  transition={{ type: "spring", bounce: 0.1, duration: 0.5 }}
+                  initial={false}
+                  animate={
+                    reduce
+                      ? undefined
+                      : {
+                          opacity: revealExpandedContent ? 1 : 0,
+                          filter: revealExpandedContent ? "blur(0px)" : "blur(4px)",
+                          transform: revealExpandedContent
+                            ? "translateY(0px) scale(1)"
+                            : "translateY(-2px) scale(0.98)",
+                        }
+                  }
+                  exit={reduce ? undefined : { opacity: 0, filter: "blur(4px)" }}
+                  transition={{
+                    opacity: { duration: 0.22 },
+                    filter: { duration: 0.22 },
+                    transform: { type: "spring", bounce: 0, duration: 0.34 },
+                  }}
+                  aria-hidden={!revealExpandedContent}
                   className={cx("ezlet-description", classNames?.description)}
+                  style={{
+                    pointerEvents: revealExpandedContent ? "auto" : "none",
+                    visibility: revealExpandedContent ? "visible" : "hidden",
+                  }}
                 >
                   {description}
                 </motion.div>
@@ -182,17 +202,28 @@ export function ToastItem({
         </>
       )}
       <AnimatePresence>
-        {!hasCustomContent && isExpanded && (item.action || (item.dismissible && hovered)) ? (
+        {!hasCustomContent && isExpanded && (item.action || item.dismissible) ? (
           <motion.div
-            initial={reduce ? undefined : { opacity: 0, width: 0, scale: 0.9, marginLeft: 0 }}
-            animate={reduce ? undefined : { opacity: 1, width: "auto", scale: 1, marginLeft: 8 }}
-            exit={reduce ? undefined : { opacity: 0, width: 0, scale: 0.9, marginLeft: 0 }}
-            transition={transition?.morph ?? { type: "spring", bounce: 0.1, duration: 0.4 }}
+            initial={false}
+            animate={
+              reduce
+                ? undefined
+                : {
+                    opacity: revealExpandedContent ? 1 : 0,
+                    filter: revealExpandedContent ? "blur(0px)" : "blur(4px)",
+                    scale: revealExpandedContent ? 1 : 0.96,
+                  }
+            }
+            exit={reduce ? undefined : { opacity: 0, filter: "blur(4px)", scale: 0.96 }}
+            transition={transition?.morph ?? { type: "spring", bounce: 0.08, duration: 0.34 }}
+            aria-hidden={!revealExpandedContent}
             style={{
               display: "flex",
               alignItems: "center",
               gap: 8,
               overflow: "hidden",
+              pointerEvents: revealExpandedContent ? "auto" : "none",
+              visibility: revealExpandedContent ? "visible" : "hidden",
               whiteSpace: "nowrap",
             }}
             className="ezlet-buttons-group"
@@ -207,11 +238,15 @@ export function ToastItem({
               </button>
             )}
             <AnimatePresence>
-              {item.dismissible && hovered ? (
+              {item.dismissible ? (
                 <motion.button
-                  initial={reduce ? undefined : { opacity: 0, scale: 0.8, width: 0 }}
-                  animate={reduce ? undefined : { opacity: 1, scale: 1, width: 24 }}
-                  exit={reduce ? undefined : { opacity: 0, scale: 0.8, width: 0 }}
+                  initial={false}
+                  animate={
+                    reduce
+                      ? undefined
+                      : { opacity: revealExpandedContent ? 1 : 0, scale: revealExpandedContent ? 1 : 0.85 }
+                  }
+                  exit={reduce ? undefined : { opacity: 0, scale: 0.85 }}
                   transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                   style={{ overflow: "hidden", whiteSpace: "nowrap" }}
                   aria-label="Dismiss toast"

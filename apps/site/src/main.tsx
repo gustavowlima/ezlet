@@ -6,6 +6,7 @@ import {
   type ToastTheme,
   toast,
 } from "ezlet";
+import { motion } from "motion/react";
 import { type CSSProperties, type ReactNode, useMemo, useState } from "react";
 import { ShikiCodeBlock } from "@/components/docs/shiki-code-block";
 import { Button, type ButtonState, StatefulButton } from "@/components/motion/button";
@@ -141,7 +142,9 @@ export function App() {
   }
 
   function downloadDemo() {
-    const id = toast.loading("Requesting server…", { description: "Connecting for database.sql…" });
+    const id = toast.loading("Requesting server…", {
+      description: "Connecting for database.sql…",
+    });
     let p = 0;
     const iv = setInterval(() => {
       p += 10;
@@ -429,7 +432,7 @@ export function App() {
 
 toast.update(id, {
   title: "Uploading document.pdf",
-  description: <ProgressBar value={45} speed="12.4 MB/s" />,
+  description: <ProgressBar value={45} speed="12.4 MB/s" color="bg-blue-500" />,
 });
 
 toast.update(id, {
@@ -446,6 +449,11 @@ toast.update(id, {
       fn: downloadDemo,
       code: `const id = toast.loading("Requesting server…", {
   description: "Connecting for database.sql…",
+});
+
+toast.update(id, {
+  title: "Downloading database.sql",
+  description: <ProgressBar value={45} speed="4.8 MB/s" color="bg-indigo-500" />,
 });
 
 toast.update(id, {
@@ -934,15 +942,16 @@ function SliderCard({
 
 function ProgressBar({ value, speed, color }: { value: number; speed: string; color: string }) {
   return (
-    <div className="mt-1 flex w-full max-w-44 flex-col gap-1.5">
-      <div className="flex justify-between text-[10px] text-white/35 font-mono">
+    <div className="mt-1 flex w-full flex-col gap-1.5">
+      <div className="flex justify-between text-[10px] text-white/40 font-medium tabular-nums">
         <span>{value}%</span>
         <span>{speed}</span>
       </div>
-      <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-        <div
-          className={`h-full ${color} rounded-full transition-all duration-300`}
-          style={{ width: `${value}%` }}
+      <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+        <motion.div
+          className={`h-full ${color} rounded-full`}
+          animate={{ width: `${value}%` }}
+          transition={{ type: "spring", bounce: 0, duration: 0.8 }}
         />
       </div>
     </div>

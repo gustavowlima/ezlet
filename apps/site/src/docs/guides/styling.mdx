@@ -1,6 +1,6 @@
 ---
 title: Styling
-description: Customize Ezlet with CSS variables, the classNames prop, or fully unstyled rendering.
+description: Customize Ezlet with CSS variables, the classNames prop, or fully custom toasts.
 section: guides
 ---
 
@@ -33,30 +33,25 @@ Target named slots — `toast`, `title`, `description`, `action`, `icon`:
 />
 ```
 
-## Unstyled
+## Fully custom toasts
 
-Strip the base skin entirely and supply your own classes:
+Use `toast.custom()` when one notification needs its own JSX and styling while keeping Ezlet's
+stacking, timers, dismissal, and motion:
 
 ```tsx
-<Toaster
-  unstyled
-  classNames={{
-    toast: [
-      "rounded-2xl border border-zinc-800 bg-zinc-950",
-      "text-zinc-50 shadow-2xl px-4 py-3",
-    ].join(" "),
-    title: "text-sm font-medium",
-    description: "text-sm text-zinc-400 mt-0.5",
-  }}
-/>
-```
-
-## Per-toast overrides
-
-Pass `className` on individual `toast()` calls to override one notification:
-
-```ts
-toast.success("Saved", {
-  className: "border-emerald-500/30 bg-emerald-950",
-});
+toast.custom((item) => (
+  <div className="flex w-full items-center rounded-lg bg-white p-4 shadow-lg ring-1 ring-black/5">
+    <div className="min-w-0 flex-1">
+      <p className="text-sm font-medium text-gray-900">Headless toast</p>
+      <p className="mt-1 text-sm text-gray-500">Full control of markup and styles.</p>
+    </div>
+    <button
+      className="ml-4 rounded bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-600"
+      onClick={() => toast.dismiss(item.id)}
+      type="button"
+    >
+      Close
+    </button>
+  </div>
+));
 ```

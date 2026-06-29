@@ -51,27 +51,6 @@ describe("Toaster", () => {
     expect(document.head.querySelectorAll("#ezlet-styles")).toHaveLength(1);
   });
 
-  test("can skip automatic style injection", () => {
-    render(<Toaster injectStyles={false} />);
-
-    act(() => {
-      toast("Manual styles");
-    });
-
-    expect(document.head.querySelector("#ezlet-styles")).toBeNull();
-  });
-
-  test("unstyled mode skips automatic style injection", () => {
-    render(<Toaster unstyled />);
-
-    act(() => {
-      toast("Tailwind only");
-    });
-
-    expect(document.head.querySelector("#ezlet-styles")).toBeNull();
-    expect(document.body.querySelector("[data-unstyled='true']")).toBeTruthy();
-  });
-
   test("uses alert role for errors", () => {
     render(<Toaster />);
 
@@ -89,11 +68,11 @@ describe("Toaster", () => {
       toast("Dismiss me");
     });
 
-    // biome-ignore lint/style/noNonNullAssertion: getByText throws if not found, so closest always returns an element here
-    const shell = screen.getByText("Dismiss me").closest(".ezlet-shell")!;
-    fireEvent.mouseEnter(shell);
+    act(() => {
+      fireEvent.focus(screen.getByRole("status"));
+    });
 
-    fireEvent.click(screen.getByLabelText("Dismiss toast"));
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss toast" }));
 
     expect(toastStore.getSnapshot()[0]?.status).toBe("dismissed");
 
@@ -177,6 +156,28 @@ describe("Toaster", () => {
     expect(screen.getByText(/Custom/)).toBeTruthy();
   });
 
+  test("renders updated ReactNode descriptions without changing variant", () => {
+    render(<Toaster />);
+
+    let id: string | number | undefined;
+    act(() => {
+      id = toast.loading("Uploading", { description: "Preparing file" });
+    });
+
+    expect(screen.getByText("Preparing file")).toBeTruthy();
+
+    act(() => {
+      if (id !== undefined) {
+        toast.update(id, {
+          title: "Uploading",
+          description: <div data-testid="progress-bar">45%</div>,
+        });
+      }
+    });
+
+    expect(screen.getByTestId("progress-bar").textContent).toBe("45%");
+  });
+
   test("supports renderToast override", () => {
     render(<Toaster renderToast={(item) => <div role="status">Override {item.title}</div>} />);
 
@@ -205,7 +206,9 @@ describe("Toaster", () => {
     });
 
     const toastElement = screen.getByRole("status");
-    toastElement.focus();
+    act(() => {
+      toastElement.focus();
+    });
     fireEvent.keyDown(toastElement, { key: "Escape" });
 
     expect(toastStore.getSnapshot()[0]?.status).toBe("dismissed");

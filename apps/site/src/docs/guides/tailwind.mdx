@@ -4,13 +4,12 @@ description: Ezlet doesn't depend on Tailwind, but it exposes stable data-* hook
 section: guides
 ---
 
-## unstyled + classNames
+## classNames
 
-The fastest path to a fully custom look with Tailwind:
+Use `classNames` to layer Tailwind utilities on top of Ezlet's base layout:
 
 ```tsx
 <Toaster
-  unstyled
   classNames={{
     toast: "rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-50 shadow-2xl",
     title: "text-sm font-medium",
@@ -42,7 +41,6 @@ Stable `data-*` hooks let you target variant and state in CSS or Tailwind varian
 ```tsx
 // v3+: target data attributes with arbitrary variants
 <Toaster
-  unstyled
   classNames={{
     toast: "data-[variant=success]:border-emerald-500/30 data-[variant=error]:border-red-500/30",
   }}

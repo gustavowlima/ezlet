@@ -38,6 +38,7 @@ describe("toast store", () => {
     expect(updated?.title).toBe("Done");
     expect(updated?.variant).toBe("success");
     expect(updated?.createdAt).toBe(100);
+    expect(updated?.updatedAt).toBeGreaterThan(created.updatedAt);
     expect(updated?.status).toBe("visible");
   });
 

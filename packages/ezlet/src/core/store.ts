@@ -77,11 +77,12 @@ export function createToastStore(): ToastStore {
 
     update(options) {
       let updated: ToastT | undefined;
-      const now = Date.now();
       const nextToasts = toasts.map((toast) => {
         if (toast.id !== options.id) {
           return toast;
         }
+
+        const now = Math.max(Date.now(), toast.updatedAt + 1);
 
         updated = {
           ...toast,

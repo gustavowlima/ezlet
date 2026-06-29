@@ -17,25 +17,28 @@ export function App() {
 }
 ```
 
-Base styles are injected automatically by the toaster. If you want to manage CSS manually, import
-the stylesheet and disable injection:
-
-```tsx
-import { Toaster } from "ezlet";
-import "ezlet/styles.css";
-
-<Toaster injectStyles={false} />;
-```
-
-For Tailwind-only styling, skip the default CSS:
+Base styles are injected automatically by the toaster. Customize the default skin with CSS variables
+or slot classes:
 
 ```tsx
 <Toaster
-  unstyled
   classNames={{
-    toast: "grid min-h-14 w-96 grid-cols-[auto_1fr_auto] items-center gap-3 rounded-2xl bg-black px-4 text-white",
+    toast: "border border-zinc-800 bg-zinc-950 text-white",
+    title: "font-semibold",
+    description: "text-zinc-400",
   }}
 />;
+```
+
+For fully custom isolated toasts, render your own JSX:
+
+```tsx
+toast.custom((item) => (
+  <div className="flex w-full items-center rounded-lg bg-white p-4 shadow-lg">
+    <p className="text-sm font-medium text-gray-900">Custom toast {item.id}</p>
+    <button onClick={() => toast.dismiss(item.id)}>Close</button>
+  </div>
+));
 ```
 
 ## Development
