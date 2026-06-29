@@ -1,6 +1,6 @@
 {
   "name": "ezlet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Toast library for React.",
   "license": "MIT",
   "module": "dist/index.js",
