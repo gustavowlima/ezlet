@@ -287,8 +287,19 @@ export function App() {
           <div style={compactStyle}>
             <div className="flex items-center gap-3">
               <div className="size-10 bg-amber-500/10 border border-amber-500/20 rounded-full flex items-center justify-center text-amber-500 shrink-0">
-                <svg className="size-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <svg
+                  className="size-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
               <div className="flex flex-col">
@@ -296,7 +307,9 @@ export function App() {
                 <span className="text-[10px] text-neutral-400">Pomodoro: 14:25 restantes</span>
               </div>
             </div>
-            <span className="text-[10px] font-mono bg-neutral-800 px-2 py-1 rounded-md text-amber-400 font-bold border border-neutral-700/30 ml-3 shrink-0">14:25</span>
+            <span className="text-[10px] font-mono bg-neutral-800 px-2 py-1 rounded-md text-amber-400 font-bold border border-neutral-700/30 ml-3 shrink-0">
+              14:25
+            </span>
           </div>
 
           {/* 2. EXPANDED */}
@@ -305,8 +318,19 @@ export function App() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="size-10 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-500 shrink-0">
-                  <svg className="size-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                  <svg
+                    className="size-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
+                    />
                   </svg>
                 </div>
                 <div className="flex flex-col">
@@ -333,7 +357,11 @@ export function App() {
                 className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 h-10 rounded-xl bg-neutral-800 border border-neutral-700/40 text-xs font-medium text-neutral-300 transition-colors hover:bg-red-950/40 hover:text-red-400 active:scale-95"
               >
                 <svg className="size-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M4.5 7.5a3 3 0 013-3h9a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M4.5 7.5a3 3 0 013-3h9a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 Cancelar
               </button>
@@ -343,7 +371,11 @@ export function App() {
                 className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 h-10 rounded-xl bg-amber-500 hover:bg-amber-400 text-xs font-semibold text-neutral-950 transition-colors active:scale-95 shadow-lg shadow-amber-500/10"
               >
                 <svg className="size-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0a.75.75 0 01.75-.75H16.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75V5.25z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0a.75.75 0 01.75-.75H16.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75V5.25z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 Pausar
               </button>
@@ -353,11 +385,6 @@ export function App() {
       );
     });
   }
-
-
-
-
-
 
   const toastActions: PlaygroundAction[] = [
     {

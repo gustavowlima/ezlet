@@ -127,14 +127,14 @@ export function Ezlet({
   const activeTransition = isFirstSize.current
     ? ({ type: "tween", duration: 0 } as const)
     : expanded
-    ? {
-        width: baseTransition,
-        height: { ...baseTransition, delay: 0.15 },
-      }
-    : {
-        height: baseTransition,
-        width: { ...baseTransition, delay: 0.15 },
-      };
+      ? {
+          width: baseTransition,
+          height: { ...baseTransition, delay: 0.15 },
+        }
+      : {
+          height: baseTransition,
+          width: { ...baseTransition, delay: 0.15 },
+        };
   const contentKey = `${item.variant}:${collapsedLayer ? "layer" : "full"}`;
 
   return (
@@ -144,7 +144,7 @@ export function Ezlet({
         "ezlet-shell",
         `ezlet-toast-${item.variant}`,
         stacked && "ezlet-toast-stacked",
-        classNames?.toast
+        classNames?.toast,
       )}
       data-status={item.status}
       data-variant={item.variant}

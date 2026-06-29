@@ -89,6 +89,7 @@ describe("Toaster", () => {
       toast("Dismiss me");
     });
 
+    // biome-ignore lint/style/noNonNullAssertion: getByText throws if not found, so closest always returns an element here
     const shell = screen.getByText("Dismiss me").closest(".ezlet-shell")!;
     fireEvent.mouseEnter(shell);
 
