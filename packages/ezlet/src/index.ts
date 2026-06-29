@@ -21,4 +21,4 @@ export type {
   ToastUpdateOptions,
   ToastVariant,
 } from "./core/types";
-export { Toaster } from "./react/Toaster";
+export { Toaster } from "./react/toaster";
