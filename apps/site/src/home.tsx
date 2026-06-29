@@ -1,32 +1,23 @@
 import { Toaster, toast } from "ezlet";
 import { Link } from "@tanstack/react-router";
-import {
-  IconAccessible,
-  IconBolt,
-  IconHexagon,
-  IconPalette,
-} from "@tabler/icons-react";
+import { IconAccessible, IconBolt, IconHexagon, IconPalette } from "@tabler/icons-react";
 
 // ── Mini demo toasts ──────────────────────────────────────────────────────────
 
 function fireDemo() {
-  toast.promise(
-    new Promise((resolve) => setTimeout(() => resolve("backup.db"), 1800)),
-    {
-      messages: {
-        loading: "Saving database state",
-        success: (f) => `Saved ${f}`,
-        error: "Failed to save",
-      },
-      success: { description: "Ready for download." },
+  toast.promise(new Promise((resolve) => setTimeout(() => resolve("backup.db"), 1800)), {
+    messages: {
+      loading: "Saving database state",
+      success: (f) => `Saved ${f}`,
+      error: "Failed to save",
     },
-  );
+    success: { description: "Ready for download." },
+  });
 }
 
 // ── Copy-to-clipboard snippet ─────────────────────────────────────────────────
 
 const INSTALL = "bun add ezlet";
-
 
 // ── Feature list ──────────────────────────────────────────────────────────────
 
@@ -70,9 +61,8 @@ export function Home() {
         </h1>
 
         <p className="mb-8 max-w-[44ch] text-[15px] leading-[1.6] text-[var(--color-muted-foreground)]">
-          Ezlet is a headless-friendly React toast library. Compact pill by
-          default, expands to a card on hover — smooth spring animations
-          included.
+          Ezlet is a headless-friendly React toast library. Compact pill by default, expands to a card on
+          hover — smooth spring animations included.
         </p>
 
         {/* CTAs */}
@@ -106,7 +96,17 @@ export function Home() {
             }}
             className="ml-1 cursor-pointer rounded p-0.5 text-[var(--color-muted-foreground)]/40 transition-colors hover:text-[var(--color-muted-foreground)]"
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
               <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
             </svg>
@@ -120,22 +120,10 @@ export function Home() {
       {/* ── Features ── */}
       <section className="mx-auto grid max-w-[680px] grid-cols-2 gap-px px-6 py-16">
         {features.map(({ icon: Icon, title, desc }) => (
-          <div
-            key={title}
-            className="flex flex-col gap-2 rounded-xl p-5"
-          >
-            <Icon
-              aria-hidden="true"
-              size={22}
-              stroke={1.8}
-              className="text-[var(--color-foreground)]"
-            />
-            <p className="text-[13.5px] font-semibold text-[var(--color-foreground)]">
-              {title}
-            </p>
-            <p className="text-[13px] leading-[1.55] text-[var(--color-muted-foreground)]">
-              {desc}
-            </p>
+          <div key={title} className="flex flex-col gap-2 rounded-xl p-5">
+            <Icon aria-hidden="true" size={22} stroke={1.8} className="text-[var(--color-foreground)]" />
+            <p className="text-[13.5px] font-semibold text-[var(--color-foreground)]">{title}</p>
+            <p className="text-[13px] leading-[1.55] text-[var(--color-muted-foreground)]">{desc}</p>
           </div>
         ))}
       </section>
@@ -143,9 +131,7 @@ export function Home() {
       {/* ── Footer CTA ── */}
       <div className="mx-auto max-w-[680px] border-t border-[var(--color-border)] px-6" />
       <section className="mx-auto flex max-w-[680px] items-center justify-between px-6 py-8">
-        <p className="text-[13px] text-[var(--color-muted-foreground)]">
-          Open source — MIT licence
-        </p>
+        <p className="text-[13px] text-[var(--color-muted-foreground)]">Open source — MIT licence</p>
         <div className="flex items-center gap-4">
           <a
             href="https://github.com/gustavowlima/ezlet"
