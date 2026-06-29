@@ -1,0 +1,11 @@
+# Keep npm from falling back to the root .gitignore, which ignores dist.
+
+src
+test
+scripts
+node_modules
+*.test.ts
+*.test.tsx
+bunfig.toml
+tsconfig.json
+tsdown.config.ts
