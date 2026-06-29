@@ -36,8 +36,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      ezlet$: path.resolve(rootDir, "../../packages/ezlet/src/index.ts"),
       "ezlet/styles.css": path.resolve(rootDir, "../../packages/ezlet/src/styles/ezlet.css"),
+      "ezlet": path.resolve(rootDir, "../../packages/ezlet/src/index.ts"),
       "@": path.resolve(rootDir, "src"),
     },
   },
