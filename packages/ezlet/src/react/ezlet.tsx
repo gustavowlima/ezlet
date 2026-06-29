@@ -145,7 +145,21 @@ export function Ezlet({
   }, [size]);
 
   const baseTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.morph ?? morphSpring);
-  const activeTransition = isFirstSize.current ? ({ type: "tween", duration: 0 } as const) : baseTransition;
+  const activeTransition = isFirstSize.current
+    ? ({ type: "tween", duration: 0 } as const)
+    : shouldReduceMotion
+      ? reducedMotionTransition
+      : {
+          ...baseTransition,
+          width: {
+            ...baseTransition,
+            delay: expanded ? 0 : 0.12,
+          },
+          height: {
+            ...baseTransition,
+            delay: expanded ? 0.12 : 0,
+          },
+        };
   const contentKey = `${item.variant}:${collapsedLayer ? "layer" : "full"}`;
 
   return (

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
-import { iconSpring } from "../animation/springs";
+import { contentSpring, iconSpring } from "../animation/springs";
 import { toast } from "../core/toast";
 import type {
   ToastClassNames,
@@ -85,7 +85,8 @@ export function ToastItem({
   const description = renderMessage(item.description);
   const hasDescription = description !== null;
   const isExpanded = expanded;
-  const revealExpandedContent = reduce || expandedContentVisible;
+  const revealExpandedContent = reduce || expandedContentVisible || !isExpanded;
+  const contentTransition = transition?.morph ?? contentSpring;
 
   const customContent = item.render?.({
     ...item,
@@ -165,33 +166,74 @@ export function ToastItem({
             key={item.id}
             transition={transition?.morph ?? { type: "spring", bounce: 0.15, duration: 0.5 }}
           >
-            {title !== null ? <div className={cx("ezlet-title", classNames?.title)}>{title}</div> : null}
+            <div className="ezlet-copy">
+              {title !== null ? (
+                <motion.div
+                  layout
+                  initial={false}
+                  animate={reduce ? undefined : { opacity: isExpanded ? 0.96 : 1, y: isExpanded ? -1 : 0 }}
+                  className={cx("ezlet-title", classNames?.title)}
+                  transition={contentTransition}
+                >
+                  {title}
+                </motion.div>
+              ) : null}
+            </div>
             <AnimatePresence>
               {hasDescription && isExpanded ? (
                 <motion.div
-                  initial={false}
+                  layout
+                  initial={
+                    reduce
+                      ? false
+                      : {
+                          opacity: 0,
+                          filter: "blur(4px)",
+                          y: -2,
+                          scale: 0.98,
+                          height: 0,
+                          marginTop: 0,
+                        }
+                  }
                   animate={
                     reduce
                       ? undefined
                       : {
                           opacity: revealExpandedContent ? 1 : 0,
                           filter: revealExpandedContent ? "blur(0px)" : "blur(4px)",
-                          transform: revealExpandedContent
-                            ? "translateY(0px) scale(1)"
-                            : "translateY(-2px) scale(0.98)",
+                          y: revealExpandedContent ? 0 : -2,
+                          scale: revealExpandedContent ? 1 : 0.98,
+                          height: revealExpandedContent ? "auto" : 0,
+                          marginTop: revealExpandedContent ? 2 : 0,
                         }
                   }
-                  exit={reduce ? undefined : { opacity: 0, filter: "blur(4px)" }}
+                  exit={
+                    reduce
+                      ? undefined
+                      : {
+                          opacity: 0,
+                          filter: "blur(4px)",
+                          y: -3,
+                          scale: 0.98,
+                          height: 0,
+                          marginTop: 0,
+                        }
+                  }
                   transition={{
+                    ...contentTransition,
+                    delay: revealExpandedContent ? 0.04 : 0,
                     opacity: { duration: 0.22 },
                     filter: { duration: 0.22 },
-                    transform: { type: "spring", bounce: 0, duration: 0.34 },
+                    y: { type: "spring", bounce: 0, duration: 0.34 },
+                    scale: { type: "spring", bounce: 0, duration: 0.34 },
+                    height: contentTransition,
+                    marginTop: contentTransition,
                   }}
                   aria-hidden={!revealExpandedContent}
                   className={cx("ezlet-description", classNames?.description)}
                   style={{
                     pointerEvents: revealExpandedContent ? "auto" : "none",
-                    visibility: revealExpandedContent ? "visible" : "hidden",
+                    overflow: "hidden",
                   }}
                 >
                   {description}
@@ -204,6 +246,7 @@ export function ToastItem({
       <AnimatePresence>
         {!hasCustomContent && isExpanded && (item.action || item.dismissible) ? (
           <motion.div
+            layout
             initial={false}
             animate={
               reduce
@@ -214,8 +257,24 @@ export function ToastItem({
                     scale: revealExpandedContent ? 1 : 0.96,
                   }
             }
-            exit={reduce ? undefined : { opacity: 0, filter: "blur(4px)", scale: 0.96 }}
-            transition={transition?.morph ?? { type: "spring", bounce: 0.08, duration: 0.34 }}
+            exit={
+              reduce
+                ? undefined
+                : {
+                    opacity: 0,
+                    filter: "blur(4px)",
+                    y: -2,
+                    scale: 0.96,
+                  }
+            }
+            transition={{
+              ...contentTransition,
+              delay: revealExpandedContent ? 0.08 : 0,
+              opacity: { duration: 0.22 },
+              filter: { duration: 0.22 },
+              y: { type: "spring", bounce: 0.04, duration: 0.3 },
+              scale: { type: "spring", bounce: 0.04, duration: 0.3 },
+            }}
             aria-hidden={!revealExpandedContent}
             style={{
               display: "flex",
@@ -223,7 +282,6 @@ export function ToastItem({
               gap: 8,
               overflow: "hidden",
               pointerEvents: revealExpandedContent ? "auto" : "none",
-              visibility: revealExpandedContent ? "visible" : "hidden",
               whiteSpace: "nowrap",
             }}
             className="ezlet-buttons-group"

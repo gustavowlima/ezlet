@@ -244,8 +244,6 @@ export function App() {
           style={{
             width: isExpanded ? "min(380px, calc(100vw - 32px))" : `${w}px`,
             height: `${h}px`,
-            // resize starts AFTER outgoing content has faded (160ms delay both ways)
-            transition: `width 380ms ${ease} 160ms, height 380ms ${ease} 160ms`,
           }}
         >
           {/* 1. COMPACT */}
