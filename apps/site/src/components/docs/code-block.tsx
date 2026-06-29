@@ -1,13 +1,10 @@
-import { cn } from "@/lib/utils";
 import type { ComponentPropsWithoutRef } from "react";
+import { cn } from "@/lib/utils";
 
 // Wrapper around Shiki-highlighted <pre> blocks.
 // Shiki injects --shiki-dark / --shiki-light CSS vars on each <span>.
 // We strip Shiki's inline background and apply our own via CSS vars.
-export function CodeBlock({
-  children,
-  className,
-}: ComponentPropsWithoutRef<"pre">) {
+export function CodeBlock({ children, className }: ComponentPropsWithoutRef<"pre">) {
   return (
     <div className="overflow-hidden rounded-xl border border-[var(--color-site-border)] bg-[var(--color-card)]">
       <pre

@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useState, type MouseEvent } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 function getInitialTheme(): "dark" | "light" {
@@ -47,10 +47,7 @@ export function useTheme() {
       const rect = target?.getBoundingClientRect();
       const x = event?.clientX ?? (rect ? rect.left + rect.width / 2 : window.innerWidth / 2);
       const y = event?.clientY ?? (rect ? rect.top + rect.height / 2 : window.innerHeight / 2);
-      const endRadius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y),
-      );
+      const endRadius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
 
       void transition.ready.then(() => {
         document.documentElement.animate(

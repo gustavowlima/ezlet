@@ -89,6 +89,9 @@ describe("Toaster", () => {
       toast("Dismiss me");
     });
 
+    const shell = screen.getByText("Dismiss me").closest(".ezlet-shell")!;
+    fireEvent.mouseEnter(shell);
+
     fireEvent.click(screen.getByLabelText("Dismiss toast"));
 
     expect(toastStore.getSnapshot()[0]?.status).toBe("dismissed");

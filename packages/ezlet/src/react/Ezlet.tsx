@@ -56,6 +56,10 @@ function useMeasuredSize() {
   return [ref, size] as const;
 }
 
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export function Ezlet({
   item,
   classNames,
@@ -70,6 +74,35 @@ export function Ezlet({
   const shellRef = useRef<HTMLDivElement>(null);
   const [sizerRef, size] = useMeasuredSize();
 
+  const isTest = typeof process !== "undefined" && process.env.NODE_ENV === "test";
+  const [autoExpanded, setAutoExpanded] = useState(isTest);
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    if (isTest || collapsedLayer) {
+      return;
+    }
+
+    let collapseTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const expandTimer = setTimeout(() => {
+      setAutoExpanded(true);
+
+      collapseTimer = setTimeout(() => {
+        setAutoExpanded(false);
+      }, 2500);
+    }, 350);
+
+    return () => {
+      clearTimeout(expandTimer);
+      if (collapseTimer) {
+        clearTimeout(collapseTimer);
+      }
+    };
+  }, [collapsedLayer, isTest]);
+
+  const expanded = !collapsedLayer && (autoExpanded || hovered);
+
   // Report the pill's real height so the toaster can lay out the expanded list.
   useEffect(() => {
     const el = shellRef.current;
@@ -83,24 +116,51 @@ export function Ezlet({
     return () => observer.disconnect();
   }, [item.id, onHeight, size?.height]);
 
-  const layoutTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.morph ?? morphSpring);
-  const contentKey = `${item.variant}:${collapsedLayer ? "layer" : "full"}:${String(item.title)}:${String(item.description)}`;
+  const isFirstSize = useRef(true);
+  useEffect(() => {
+    if (size) {
+      isFirstSize.current = false;
+    }
+  }, [size]);
+
+  const baseTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.morph ?? morphSpring);
+  const activeTransition = isFirstSize.current
+    ? ({ type: "tween", duration: 0 } as const)
+    : expanded
+    ? {
+        width: baseTransition,
+        height: { ...baseTransition, delay: 0.15 },
+      }
+    : {
+        height: baseTransition,
+        width: { ...baseTransition, delay: 0.15 },
+      };
+  const contentKey = `${item.variant}:${collapsedLayer ? "layer" : "full"}`;
 
   return (
     <motion.div
       ref={shellRef}
-      className="ezlet-shell"
+      className={cx(
+        "ezlet-shell",
+        `ezlet-toast-${item.variant}`,
+        stacked && "ezlet-toast-stacked",
+        classNames?.toast
+      )}
+      data-status={item.status}
+      data-variant={item.variant}
+      data-expanded={expanded ? "true" : "false"}
       drag={item.dismissible && !stacked ? "x" : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.18}
-      layout
       animate={size ? { width: size.width, height: size.height } : undefined}
       onDragEnd={(_, info) => {
         if (Math.abs(info.offset.x) > 80 || Math.abs(info.velocity.x) > 600) {
           toast.dismiss(item.id);
         }
       }}
-      transition={layoutTransition}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      transition={activeTransition}
     >
       <div ref={sizerRef} className="ezlet-sizer">
         <MorphContent contentKey={contentKey} reduceMotion={shouldReduceMotion ?? false}>
@@ -110,6 +170,8 @@ export function Ezlet({
             <ToastItem
               classNames={classNames}
               collapsedLayer={collapsedLayer}
+              expanded={expanded}
+              hovered={hovered}
               icons={icons}
               item={item}
               stacked={stacked}

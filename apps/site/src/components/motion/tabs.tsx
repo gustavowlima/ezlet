@@ -1,7 +1,7 @@
 // Adapted from beui.dev/components/motion/tabs
 
-import { motion, MotionConfig, useReducedMotion, type Transition } from "motion/react";
-import { createContext, useContext, useId, useState, type ReactNode } from "react";
+import { MotionConfig, motion, type Transition, useReducedMotion } from "motion/react";
+import { createContext, type ReactNode, useContext, useId, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type Variant = "pill" | "underline" | "segment";

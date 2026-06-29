@@ -8,9 +8,9 @@ import {
   RouterProvider,
   useRouterState,
 } from "@tanstack/react-router";
-import { Github } from "lucide-react";
 import { Toaster } from "ezlet";
-import { type ComponentType, type ReactNode } from "react";
+import { Github } from "lucide-react";
+import type { ComponentType, ReactNode } from "react";
 import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { mdxComponents } from "@/docs/mdx-components";
 import type { DocMeta } from "@/docs/types";
@@ -18,13 +18,13 @@ import { App } from "./main";
 
 // ── MDX page imports ──────────────────────────────────────────────────────────
 
-import KickstartMdx, { frontmatter as kickstartFm } from "./docs/kickstart.mdx";
-import ToasterMdx, { frontmatter as toasterFm } from "./docs/api/toaster.mdx";
 import ToastMdx, { frontmatter as toastFm } from "./docs/api/toast.mdx";
-import StylingMdx, { frontmatter as stylingFm } from "./docs/guides/styling.mdx";
-import TailwindMdx, { frontmatter as tailwindFm } from "./docs/guides/tailwind.mdx";
+import ToasterMdx, { frontmatter as toasterFm } from "./docs/api/toaster.mdx";
 import AccessibilityMdx, { frontmatter as a11yFm } from "./docs/guides/accessibility.mdx";
 import MotionMdx, { frontmatter as motionFm } from "./docs/guides/motion.mdx";
+import StylingMdx, { frontmatter as stylingFm } from "./docs/guides/styling.mdx";
+import TailwindMdx, { frontmatter as tailwindFm } from "./docs/guides/tailwind.mdx";
+import KickstartMdx, { frontmatter as kickstartFm } from "./docs/kickstart.mdx";
 
 // ── Shell ────────────────────────────────────────────────────────────────────
 
@@ -130,15 +130,7 @@ function SideSection({ label, children }: { label: string; children: ReactNode }
   );
 }
 
-function SideLink({
-  to,
-  children,
-  exact = false,
-}: {
-  to: string;
-  children: ReactNode;
-  exact?: boolean;
-}) {
+function SideLink({ to, children, exact = false }: { to: string; children: ReactNode; exact?: boolean }) {
   return (
     <Link
       to={to}
@@ -154,19 +146,11 @@ function SideLink({
 
 // ── MDX page renderer ─────────────────────────────────────────────────────────
 
-function DocsMdxPage({
-  Component,
-  meta,
-}: {
-  Component: ComponentType;
-  meta: DocMeta;
-}) {
+function DocsMdxPage({ Component, meta }: { Component: ComponentType; meta: DocMeta }) {
   return (
     <article className="max-w-[700px] space-y-8">
       <header className="space-y-2">
-        <h1 className="text-[26px] font-bold tracking-tight text-[var(--color-foreground)]">
-          {meta.title}
-        </h1>
+        <h1 className="text-[26px] font-bold tracking-tight text-[var(--color-foreground)]">{meta.title}</h1>
         <p className="max-w-[62ch] text-[15px] leading-[1.55] text-[var(--color-muted-foreground)]">
           {meta.description}
         </p>
@@ -246,7 +230,9 @@ const routeTree = rootRoute.addChildren([
 export const router = createRouter({ routeTree, defaultViewTransition: true });
 
 declare module "@tanstack/react-router" {
-  interface Register { router: typeof router }
+  interface Register {
+    router: typeof router;
+  }
 }
 
 export function SiteRouter() {

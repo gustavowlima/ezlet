@@ -92,11 +92,11 @@ export function RangeSlider({
       if (disabled) return;
       const actions: Record<string, () => void> = {
         ArrowRight: () => setValue(value + step),
-        ArrowUp:    () => setValue(value + step),
-        ArrowLeft:  () => setValue(value - step),
-        ArrowDown:  () => setValue(value - step),
-        Home:       () => setValue(min),
-        End:        () => setValue(max),
+        ArrowUp: () => setValue(value + step),
+        ArrowLeft: () => setValue(value - step),
+        ArrowDown: () => setValue(value - step),
+        Home: () => setValue(min),
+        End: () => setValue(max),
       };
       actions[e.key]?.();
       if (e.key in actions) e.preventDefault();

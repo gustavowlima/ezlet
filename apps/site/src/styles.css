@@ -44,23 +44,23 @@ body {
 
 /* Light theme overrides */
 [data-theme="light"] {
-  --color-background:        #fafaf9;
-  --color-foreground:        #111110;
-  --color-card:              #f3f3f2;
-  --color-card-foreground:   #111110;
-  --color-primary:           #111110;
-  --color-primary-foreground:#fafaf9;
-  --color-muted-foreground:  oklch(50% 0 0);
-  --color-border:            oklch(0% 0 0 / 0.08);
-  --color-site-bg:           #fafaf9;
-  --color-site-panel:        #f3f3f2;
-  --color-site-border:       oklch(0% 0 0 / 0.08);
-  --color-syn-plain:         #383a42;
-  --color-syn-keyword:       #a626a4;
-  --color-syn-string:        #50a14f;
-  --color-syn-comment:       #a0a1a7;
-  --color-syn-tag:           #e45649;
-  --color-syn-number:        #986801;
+  --color-background: #fafaf9;
+  --color-foreground: #111110;
+  --color-card: #f3f3f2;
+  --color-card-foreground: #111110;
+  --color-primary: #111110;
+  --color-primary-foreground: #fafaf9;
+  --color-muted-foreground: oklch(50% 0 0);
+  --color-border: oklch(0% 0 0 / 0.08);
+  --color-site-bg: #fafaf9;
+  --color-site-panel: #f3f3f2;
+  --color-site-border: oklch(0% 0 0 / 0.08);
+  --color-syn-plain: #383a42;
+  --color-syn-keyword: #a626a4;
+  --color-syn-string: #50a14f;
+  --color-syn-comment: #a0a1a7;
+  --color-syn-tag: #e45649;
+  --color-syn-number: #986801;
 }
 
 [data-theme="light"] body {
@@ -113,4 +113,7 @@ input[type="range"] {
 }
 
 /* Ensure line wrappers don't collapse */
-.shiki .line { display: block; min-height: 0.98em; }
+.shiki .line {
+  display: block;
+  min-height: 0.98em;
+}

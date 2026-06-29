@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useState } from "react";
+
 import { iconSpring } from "../animation/springs";
 import { toast } from "../core/toast";
 import type {
@@ -10,16 +10,6 @@ import type {
   ToastT,
 } from "../core/types";
 import { CloseIcon, DefaultIcon, ErrorIcon, InfoIcon, LoadingIcon, SuccessIcon } from "./icons";
-
-interface ToastItemProps {
-  item: ToastT;
-  classNames?: ToastClassNames;
-  collapsedLayer?: boolean;
-  icons?: Partial<Record<ToastT["variant"], ToastIconRenderer>>;
-  style?: React.CSSProperties;
-  stacked?: boolean;
-  transition?: ToasterTransition;
-}
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -65,6 +55,18 @@ function getDefaultIcon(item: ToastT, icons?: Partial<Record<ToastT["variant"], 
   }
 }
 
+interface ToastItemProps {
+  item: ToastT;
+  classNames?: ToastClassNames;
+  collapsedLayer?: boolean;
+  icons?: Partial<Record<ToastT["variant"], ToastIconRenderer>>;
+  style?: React.CSSProperties;
+  stacked?: boolean;
+  transition?: ToasterTransition;
+  expanded?: boolean;
+  hovered?: boolean;
+}
+
 export function ToastItem({
   item,
   classNames,
@@ -73,43 +75,15 @@ export function ToastItem({
   style,
   stacked,
   transition,
+  expanded = false,
+  hovered = false,
 }: ToastItemProps) {
   const reduce = useReducedMotion();
   const role = item.variant === "error" ? "alert" : "status";
   const title = renderMessage(item.title);
   const description = renderMessage(item.description);
   const hasDescription = description !== null;
-
-  const isTest = typeof process !== "undefined" && process.env.NODE_ENV === "test";
-  const [autoExpanded, setAutoExpanded] = useState(isTest);
-  const [hovered, setHovered] = useState(false);
-
-  useEffect(() => {
-    if (isTest) {
-      return;
-    }
-
-    let collapseTimer: ReturnType<typeof setTimeout> | undefined;
-
-    // 1. Auto-expand 350ms after mounting
-    const expandTimer = setTimeout(() => {
-      setAutoExpanded(true);
-
-      // 2. Collapse back to compact state after 2500ms
-      collapseTimer = setTimeout(() => {
-        setAutoExpanded(false);
-      }, 2500);
-    }, 350);
-
-    return () => {
-      clearTimeout(expandTimer);
-      if (collapseTimer) {
-        clearTimeout(collapseTimer);
-      }
-    };
-  }, [isTest]);
-
-  const isExpanded = autoExpanded || hovered;
+  const isExpanded = expanded;
 
   const customContent = item.render?.({
     ...item,
@@ -145,6 +119,7 @@ export function ToastItem({
       data-ezlet-toast=""
       data-status={item.status}
       data-variant={item.variant}
+      data-expanded={isExpanded ? "true" : "false"}
       onKeyDown={(event) => {
         if (!item.dismissible) {
           return;
@@ -158,8 +133,6 @@ export function ToastItem({
       role={role}
       style={style}
       tabIndex={item.dismissible ? 0 : undefined}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
       {hasCustomContent ? (
         <motion.div
@@ -208,34 +181,48 @@ export function ToastItem({
         </>
       )}
       <AnimatePresence>
-        {item.action && isExpanded ? (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
-            className={cx("ezlet-action", classNames?.actionButton)}
-            onClick={() => item.action?.onClick(item.id)}
-            type="button"
+        {!hasCustomContent && isExpanded && (item.action || (item.dismissible && hovered)) ? (
+          <motion.div
+            initial={reduce ? undefined : { opacity: 0, width: 0, scale: 0.9, marginLeft: 0 }}
+            animate={reduce ? undefined : { opacity: 1, width: "auto", scale: 1, marginLeft: 8 }}
+            exit={reduce ? undefined : { opacity: 0, width: 0, scale: 0.9, marginLeft: 0 }}
+            transition={transition?.morph ?? { type: "spring", bounce: 0.1, duration: 0.4 }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+            }}
+            className="ezlet-buttons-group"
           >
-            {item.action.label}
-          </motion.button>
-        ) : null}
-      </AnimatePresence>
-      <AnimatePresence>
-        {item.dismissible && isExpanded ? (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
-            aria-label="Dismiss toast"
-            className={cx("ezlet-dismiss", classNames?.dismissButton)}
-            onClick={() => toast.dismiss(item.id)}
-            type="button"
-          >
-            <CloseIcon />
-          </motion.button>
+            {item.action && (
+              <button
+                className={cx("ezlet-action", classNames?.actionButton)}
+                onClick={() => item.action?.onClick(item.id)}
+                type="button"
+              >
+                {item.action.label}
+              </button>
+            )}
+            <AnimatePresence>
+              {item.dismissible && hovered ? (
+                <motion.button
+                  initial={reduce ? undefined : { opacity: 0, scale: 0.8, width: 0 }}
+                  animate={reduce ? undefined : { opacity: 1, scale: 1, width: 24 }}
+                  exit={reduce ? undefined : { opacity: 0, scale: 0.8, width: 0 }}
+                  transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                  style={{ overflow: "hidden", whiteSpace: "nowrap" }}
+                  aria-label="Dismiss toast"
+                  className={cx("ezlet-dismiss", classNames?.dismissButton)}
+                  onClick={() => toast.dismiss(item.id)}
+                  type="button"
+                >
+                  <CloseIcon />
+                </motion.button>
+              ) : null}
+            </AnimatePresence>
+          </motion.div>
         ) : null}
       </AnimatePresence>
     </div>

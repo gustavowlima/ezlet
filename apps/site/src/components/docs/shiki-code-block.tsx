@@ -1,5 +1,5 @@
-import { codeToHtml, type BundledLanguage } from "shiki";
 import { useEffect, useMemo, useState } from "react";
+import { type BundledLanguage, codeToHtml } from "shiki";
 
 const SHIKI_THEMES = {
   dark: "github-dark-dimmed",
@@ -9,13 +9,7 @@ const SHIKI_THEMES = {
 const htmlCache = new Map<string, string>();
 const pending = new Map<string, Promise<string>>();
 
-export function ShikiCodeBlock({
-  code,
-  lang = "tsx",
-}: {
-  code: string;
-  lang?: BundledLanguage;
-}) {
+export function ShikiCodeBlock({ code, lang = "tsx" }: { code: string; lang?: BundledLanguage }) {
   const cacheKey = useMemo(() => `${lang}\n${code}`, [code, lang]);
   const [html, setHtml] = useState(() => htmlCache.get(cacheKey) ?? "");
 

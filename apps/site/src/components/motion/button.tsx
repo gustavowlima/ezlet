@@ -1,21 +1,15 @@
 // Adapted from beui.dev/components/motion/button
 
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  type HTMLMotionProps,
-  type Variants,
-} from "motion/react";
 import { Check, Loader2, X } from "lucide-react";
+import { AnimatePresence, type HTMLMotionProps, motion, useReducedMotion, type Variants } from "motion/react";
 import {
   forwardRef,
+  type PointerEvent,
+  type ReactNode,
   useCallback,
   useLayoutEffect,
   useRef,
   useState,
-  type PointerEvent,
-  type ReactNode,
 } from "react";
 import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -34,95 +28,94 @@ export interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children">
 type Ripple = { id: number; x: number; y: number; size: number };
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary:   "bg-[var(--color-foreground)] text-[var(--color-primary-foreground)] hover:opacity-90",
-  secondary: "border border-[var(--color-site-border)] bg-[var(--color-foreground)]/[0.05] text-[var(--color-foreground)]/75 hover:bg-[var(--color-foreground)]/[0.09] hover:text-[var(--color-foreground)]",
-  ghost:     "text-[var(--color-foreground)]/45 hover:bg-[var(--color-foreground)]/[0.05] hover:text-[var(--color-foreground)]",
-  outline:   "border border-[var(--color-site-border)] bg-transparent text-[var(--color-foreground)]/75 hover:bg-[var(--color-foreground)]/[0.04] hover:text-[var(--color-foreground)]",
+  primary: "bg-[var(--color-foreground)] text-[var(--color-primary-foreground)] hover:opacity-90",
+  secondary:
+    "border border-[var(--color-site-border)] bg-[var(--color-foreground)]/[0.05] text-[var(--color-foreground)]/75 hover:bg-[var(--color-foreground)]/[0.09] hover:text-[var(--color-foreground)]",
+  ghost:
+    "text-[var(--color-foreground)]/45 hover:bg-[var(--color-foreground)]/[0.05] hover:text-[var(--color-foreground)]",
+  outline:
+    "border border-[var(--color-site-border)] bg-transparent text-[var(--color-foreground)]/75 hover:bg-[var(--color-foreground)]/[0.04] hover:text-[var(--color-foreground)]",
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
-  sm:   "h-8 px-3 text-xs gap-1.5 rounded-full",
-  md:   "h-9 px-4 text-sm gap-2 rounded-full",
-  lg:   "h-11 px-5 text-[15px] gap-2 rounded-full",
+  sm: "h-8 px-3 text-xs gap-1.5 rounded-full",
+  md: "h-9 px-4 text-sm gap-2 rounded-full",
+  lg: "h-11 px-5 text-[15px] gap-2 rounded-full",
   icon: "h-8 w-8 rounded-lg",
 };
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button(
-    {
-      variant = "secondary",
-      size = "md",
-      pressScale = 0.94,
-      ripple = false,
-      className,
-      children,
-      onPointerDown,
-      ...rest
-    },
-    ref,
-  ) {
-    const reduce = useReducedMotion();
-    const [ripples, setRipples] = useState<Ripple[]>([]);
-    const nextId = useRef(0);
-
-    const handlePointerDown = useCallback(
-      (event: PointerEvent<HTMLButtonElement>) => {
-        if (ripple && !reduce) {
-          const rect = event.currentTarget.getBoundingClientRect();
-          const size = Math.max(rect.width, rect.height) * 2;
-          setRipples((prev) => [
-            ...prev,
-            { id: nextId.current++, x: event.clientX - rect.left, y: event.clientY - rect.top, size },
-          ]);
-        }
-        onPointerDown?.(event);
-      },
-      [ripple, reduce, onPointerDown],
-    );
-
-    return (
-      <motion.button
-        ref={ref}
-        type="button"
-        whileTap={reduce ? undefined : { scale: pressScale }}
-        transition={SPRING_PRESS}
-        onPointerDown={handlePointerDown}
-        className={cn(
-          "inline-flex cursor-pointer select-none items-center justify-center font-medium",
-          "transition-colors",
-          "disabled:pointer-events-none disabled:opacity-50",
-          ripple && "relative overflow-hidden",
-          VARIANT_CLASS[variant],
-          SIZE_CLASS[size],
-          className,
-        )}
-        {...rest}
-      >
-        {ripple && !reduce && (
-          <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
-            <AnimatePresence>
-              {ripples.map((r) => (
-                <motion.span
-                  key={r.id}
-                  className="absolute rounded-full bg-current"
-                  style={{ left: r.x, top: r.y, width: r.size, height: r.size, x: "-50%", y: "-50%" }}
-                  initial={{ scale: 0, opacity: 0.25 }}
-                  animate={{ scale: 1, opacity: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                  onAnimationComplete={() =>
-                    setRipples((prev) => prev.filter((x) => x.id !== r.id))
-                  }
-                />
-              ))}
-            </AnimatePresence>
-          </span>
-        )}
-        {children}
-      </motion.button>
-    );
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = "secondary",
+    size = "md",
+    pressScale = 0.94,
+    ripple = false,
+    className,
+    children,
+    onPointerDown,
+    ...rest
   },
-);
+  ref,
+) {
+  const reduce = useReducedMotion();
+  const [ripples, setRipples] = useState<Ripple[]>([]);
+  const nextId = useRef(0);
+
+  const handlePointerDown = useCallback(
+    (event: PointerEvent<HTMLButtonElement>) => {
+      if (ripple && !reduce) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 2;
+        setRipples((prev) => [
+          ...prev,
+          { id: nextId.current++, x: event.clientX - rect.left, y: event.clientY - rect.top, size },
+        ]);
+      }
+      onPointerDown?.(event);
+    },
+    [ripple, reduce, onPointerDown],
+  );
+
+  return (
+    <motion.button
+      ref={ref}
+      type="button"
+      whileTap={reduce ? undefined : { scale: pressScale }}
+      transition={SPRING_PRESS}
+      onPointerDown={handlePointerDown}
+      className={cn(
+        "inline-flex cursor-pointer select-none items-center justify-center font-medium",
+        "transition-colors",
+        "disabled:pointer-events-none disabled:opacity-50",
+        ripple && "relative overflow-hidden",
+        VARIANT_CLASS[variant],
+        SIZE_CLASS[size],
+        className,
+      )}
+      {...rest}
+    >
+      {ripple && !reduce && (
+        <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+          <AnimatePresence>
+            {ripples.map((r) => (
+              <motion.span
+                key={r.id}
+                className="absolute rounded-full bg-current"
+                style={{ left: r.x, top: r.y, width: r.size, height: r.size, x: "-50%", y: "-50%" }}
+                initial={{ scale: 0, opacity: 0.25 }}
+                animate={{ scale: 1, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+                onAnimationComplete={() => setRipples((prev) => prev.filter((x) => x.id !== r.id))}
+              />
+            ))}
+          </AnimatePresence>
+        </span>
+      )}
+      {children}
+    </motion.button>
+  );
+});
 
 // ── StatefulButton ─────────────────────────────────────────────────────────────
 
@@ -158,7 +151,13 @@ const CASCADE_LETTER_VARIANTS: Variants = {
 const ICON_VARIANTS: Variants = {
   initial: { opacity: 0, width: 0, scale: 0.7, filter: ROLL_BLUR },
   animate: { opacity: 1, width: "1.25rem", scale: 1, filter: "blur(0px)", transition: SPRING_SWAP },
-  exit:    { opacity: 0, width: 0, scale: 0.7, filter: ROLL_BLUR, transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] } },
+  exit: {
+    opacity: 0,
+    width: 0,
+    scale: 0.7,
+    filter: ROLL_BLUR,
+    transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] },
+  },
 };
 
 function IconSlot({ keyId, children }: { keyId: string; children: ReactNode }) {
@@ -243,53 +242,54 @@ function TextSlot({ value, children }: { value: string; children: ReactNode }) {
   );
 }
 
-export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>(
-  function StatefulButton(
-    {
-      state = "idle",
-      children,
-      loadingText = "Loading",
-      successText = "Done",
-      errorText = "Try again",
-      disabled,
-      ...rest
-    },
-    ref,
-  ) {
-    const isBusy = state === "loading";
-    const stateText =
-      state === "loading" ? loadingText
-      : state === "success" ? successText
-      : state === "error" ? errorText
-      : children;
-    const textKey = typeof stateText === "string" ? `${state}-${stateText}` : state;
-
-    return (
-      <Button ref={ref} disabled={disabled || isBusy} aria-busy={isBusy} {...rest}>
-        <span
-          aria-live="polite"
-          className="relative inline-flex items-center justify-center gap-1.5 overflow-hidden"
-        >
-          <AnimatePresence initial={false}>
-            {state === "loading" && (
-              <IconSlot keyId="loading-icon">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              </IconSlot>
-            )}
-            {state === "success" && (
-              <IconSlot keyId="success-icon">
-                <Check className="h-3.5 w-3.5" />
-              </IconSlot>
-            )}
-            {state === "error" && (
-              <IconSlot keyId="error-icon">
-                <X className="h-3.5 w-3.5" />
-              </IconSlot>
-            )}
-          </AnimatePresence>
-          <TextSlot value={textKey}>{stateText}</TextSlot>
-        </span>
-      </Button>
-    );
+export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>(function StatefulButton(
+  {
+    state = "idle",
+    children,
+    loadingText = "Loading",
+    successText = "Done",
+    errorText = "Try again",
+    disabled,
+    ...rest
   },
-);
+  ref,
+) {
+  const isBusy = state === "loading";
+  const stateText =
+    state === "loading"
+      ? loadingText
+      : state === "success"
+        ? successText
+        : state === "error"
+          ? errorText
+          : children;
+  const textKey = typeof stateText === "string" ? `${state}-${stateText}` : state;
+
+  return (
+    <Button ref={ref} disabled={disabled || isBusy} aria-busy={isBusy} {...rest}>
+      <span
+        aria-live="polite"
+        className="relative inline-flex items-center justify-center gap-1.5 overflow-hidden"
+      >
+        <AnimatePresence initial={false}>
+          {state === "loading" && (
+            <IconSlot keyId="loading-icon">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            </IconSlot>
+          )}
+          {state === "success" && (
+            <IconSlot keyId="success-icon">
+              <Check className="h-3.5 w-3.5" />
+            </IconSlot>
+          )}
+          {state === "error" && (
+            <IconSlot keyId="error-icon">
+              <X className="h-3.5 w-3.5" />
+            </IconSlot>
+          )}
+        </AnimatePresence>
+        <TextSlot value={textKey}>{stateText}</TextSlot>
+      </span>
+    </Button>
+  );
+});
