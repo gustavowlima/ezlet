@@ -112,6 +112,10 @@ cd apps/site && bun run build
 - Keep `ezlet/styles.css` export working.
 - Preserve stable `data-*` hooks and CSS variables when changing the component.
 - The library should not require Tailwind, but it must remain easy to customize with Tailwind.
+- **Custom toasts**: when `item.render` is set (`hasCustomContent`), the library suppresses the built-in dismiss/action button group. The custom render function owns its entire layout and is responsible for its own dismiss UX.
+- **Border-radius morphing**: `border-radius` is managed by CSS `transition` on `.ezlet-shell`, not by Framer Motion. Use a concrete pixel value (e.g. `28px`) for the compact state — never `999px`, which causes interpolation glitches due to browser clamping.
+- **Staged dimension animation**: when expanding, width animates first; height follows with a delay. When collapsing, height animates first; width follows with a delay. This is set via per-property transition delays on the `activeTransition` object in `Ezlet.tsx`.
+- **`toast.custom()` crossfade pattern**: for custom toasts with two states (compact/expanded), use two absolutely-positioned overlapping layers with `opacity` + `filter: blur()` + `transform: scale()` crossfades. The outer container transitions `width` and `height` explicitly with a delay so the outgoing content finishes fading before the container resizes.
 
 ## Website Conventions
 
