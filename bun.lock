@@ -9,6 +9,7 @@
       "name": "@ezlet/site",
       "dependencies": {
         "@mdx-js/react": "^3.1.0",
+        "@tabler/icons-react": "^3.44.0",
         "@tanstack/react-router": "^1.114.3",
         "clsx": "^2.1.1",
         "ezlet": "workspace:*",
@@ -225,6 +226,10 @@
     "@shikijs/types": ["@shikijs/types@3.23.0", "", { "dependencies": { "@shikijs/vscode-textmate": "^10.0.2", "@types/hast": "^3.0.4" } }, "sha512-3JZ5HXOZfYjsYSk0yPwBrkupyYSLpAE26Qc0HLghhZNGTZg/SKxXIIgoxOpmmeQP0RRSDJTk1/vPfw9tbw+jSQ=="],
 
     "@shikijs/vscode-textmate": ["@shikijs/vscode-textmate@10.0.2", "", {}, "sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg=="],
+
+    "@tabler/icons": ["@tabler/icons@3.44.0", "", {}, "sha512-Wn0AOZG9sg0L+bjfMqq4eNhC6pQjIrk94LvvWYNYkY8KH8wC3YILRzQlrnVJc4FUeMxH/AK97QsYCX35H3LndA=="],
+
+    "@tabler/icons-react": ["@tabler/icons-react@3.44.0", "", { "dependencies": { "@tabler/icons": "3.44.0" }, "peerDependencies": { "react": ">= 16" } }, "sha512-8+rvzBbVm/1Z3sG3x7GUNAaxIKxwgz8xaMhRs23nrCnMTKRFAhEC+82zAIFeAA0seXdrAGX5HFCkaLpGK2rVHg=="],
 
     "@tailwindcss/node": ["@tailwindcss/node@4.3.1", "", { "dependencies": { "@jridgewell/remapping": "^2.3.5", "enhanced-resolve": "5.21.6", "jiti": "^2.7.0", "lightningcss": "1.32.0", "magic-string": "^0.30.21", "source-map-js": "^1.2.1", "tailwindcss": "4.3.1" } }, "sha512-6NDaqRoAMSXD1mr/RXu0HBvNE9a2n5tHPsxu9XHLws8o4Twes5rBM2205SUUiJ9goAtadrN6xTGX0UDEwp/N4A=="],
 

@@ -15,6 +15,8 @@ import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { mdxComponents } from "@/docs/mdx-components";
 import type { DocMeta } from "@/docs/types";
 import { App } from "./main";
+import { Home } from "./home";
+
 
 // ── MDX page imports ──────────────────────────────────────────────────────────
 
@@ -167,7 +169,7 @@ function DocsMdxPage({ Component, meta }: { Component: ComponentType; meta: DocM
 // ── Routes ────────────────────────────────────────────────────────────────────
 
 const rootRoute = createRootRoute({ component: RootShell });
-const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: "/", component: App });
+const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: "/", component: Home });
 const playRoute = createRoute({ getParentRoute: () => rootRoute, path: "play", component: App });
 const docsRoute = createRoute({ getParentRoute: () => rootRoute, path: "docs", component: DocsLayout });
 
