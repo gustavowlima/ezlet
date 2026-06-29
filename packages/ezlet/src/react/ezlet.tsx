@@ -3,8 +3,8 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { morphSpring, reducedMotionTransition } from "../animation/springs";
 import { toast } from "../core/toast";
 import type { ToastClassNames, ToasterProps, ToasterTransition, ToastId, ToastT } from "../core/types";
-import { MorphContent } from "./MorphContent";
-import { ToastItem } from "./ToastItem";
+import { MorphContent } from "./morph-content";
+import { ToastItem } from "./toast-item";
 
 interface EzletProps {
   item: ToastT;
@@ -17,6 +17,8 @@ interface EzletProps {
   transition?: ToasterTransition;
   expanded?: boolean;
 }
+
+import { cx } from "../styles/utils";
 
 function useMeasuredSize() {
   const ref = useRef<HTMLDivElement>(null);
@@ -57,9 +59,6 @@ function useMeasuredSize() {
   return [ref, size] as const;
 }
 
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export function Ezlet({
   item,
@@ -77,29 +76,29 @@ export function Ezlet({
   const [sizerRef, size] = useMeasuredSize();
 
   const isTest = typeof process !== "undefined" && process.env.NODE_ENV === "test";
-  const [autoExpanded, setAutoExpanded] = useState(isTest);
   const [hovered, setHovered] = useState(false);
+  const [autoExpanded, setAutoExpanded] = useState(isTest);
 
   useEffect(() => {
-    if (isTest || collapsedLayer) {
+    if (isTest) {
       return;
     }
 
-    let collapseTimer: ReturnType<typeof setTimeout> | undefined;
+    if (collapsedLayer) {
+      return;
+    }
 
     const expandTimer = setTimeout(() => {
       setAutoExpanded(true);
-
-      collapseTimer = setTimeout(() => {
-        setAutoExpanded(false);
-      }, 2500);
     }, 350);
+
+    const collapseTimer = setTimeout(() => {
+      setAutoExpanded(false);
+    }, 2850);
 
     return () => {
       clearTimeout(expandTimer);
-      if (collapseTimer) {
-        clearTimeout(collapseTimer);
-      }
+      clearTimeout(collapseTimer);
     };
   }, [collapsedLayer, isTest]);
 
@@ -157,7 +156,7 @@ export function Ezlet({
       <div ref={sizerRef} className="ezlet-sizer">
         <MorphContent contentKey={contentKey} reduceMotion={shouldReduceMotion ?? false}>
           {renderToast && !collapsedLayer ? (
-            renderToast(item)
+            renderToast({ ...item, expanded })
           ) : (
             <ToastItem
               classNames={classNames}

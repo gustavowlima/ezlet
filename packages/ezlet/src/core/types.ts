@@ -19,7 +19,7 @@ export type ToastTheme = "light" | "dark" | "system";
 
 export type ToastMessage = ReactNode;
 
-export type ToastRenderer = (toast: ToastT) => ReactNode;
+export type ToastRenderer = (toast: ToastT & { expanded: boolean }) => ReactNode;
 
 export type ToastIconRenderer = ReactNode | ((toast: ToastT) => ReactNode);
 

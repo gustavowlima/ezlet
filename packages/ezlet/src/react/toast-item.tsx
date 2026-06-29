@@ -9,18 +9,19 @@ import type {
   ToastMessage,
   ToastT,
 } from "../core/types";
+import { cx } from "../styles/utils";
 import { CloseIcon, DefaultIcon, ErrorIcon, InfoIcon, LoadingIcon, SuccessIcon } from "./icons";
 
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(" ");
-}
-
 function renderMessage(message: ToastMessage) {
-  if (message === null || message === undefined || typeof message === "boolean") {
-    return null;
+  if (typeof message === "string" || typeof message === "number") {
+    return message;
   }
 
-  return message;
+  if (message && typeof message === "object") {
+    return message;
+  }
+
+  return null;
 }
 
 function renderIconOverride(icon: ToastIconRenderer | undefined, item: ToastT) {
@@ -88,7 +89,7 @@ export function ToastItem({
   const customContent = item.render?.({
     ...item,
     expanded: isExpanded,
-  } as ToastT);
+  });
   const hasCustomContent = customContent !== null && customContent !== undefined && customContent !== false;
 
   const iconTransition = transition?.icon ?? iconSpring;

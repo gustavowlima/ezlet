@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "bun:test";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { resetToastCounterForTests, toastStore } from "../core/store";
 import { clearToastTimersForTests, toast } from "../core/toast";
-import { Toaster } from "./Toaster";
+import { Toaster } from "./toaster";
 
 describe("Toaster", () => {
   beforeEach(() => {
