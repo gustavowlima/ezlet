@@ -1,23 +1,116 @@
 @import "tailwindcss";
 
-:root {
-  color-scheme: dark;
-  --site-bg: #08090c;
-  --site-panel: #101217;
-  --site-border: rgba(255, 255, 255, 0.08);
+@theme {
+  /* Site palette */
+  --color-background:        #0a0a0b;
+  --color-foreground:        #f8f8f8;
+  --color-card:              #111216;
+  --color-card-foreground:   #f8f8f8;
+  --color-primary:           #f8f8f8;
+  --color-primary-foreground:#0a0a0b;
+  --color-muted-foreground:  oklch(55% 0 0);
+  --color-border:            oklch(100% 0 0 / 0.07);
+  --color-ring:              oklch(100% 0 0 / 0.2);
+
+  /* Site-specific */
+  --color-site-bg:           #0a0a0b;
+  --color-site-panel:        #111216;
+  --color-site-border:       oklch(100% 0 0 / 0.07);
+
+  /* Syntax highlighting */
+  --color-syn-keyword: #c678dd;
+  --color-syn-string:  #98c379;
+  --color-syn-comment: #5c6370;
+  --color-syn-tag:     #e06c75;
+  --color-syn-number:  #d19a66;
+  --color-syn-plain:   #abb2bf;
 }
 
 html,
 body,
 #root {
   min-height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: gray transparent;
 }
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at top, rgba(63, 94, 251, 0.14), transparent 38%),
-    linear-gradient(180deg, #0a0b0f 0%, var(--site-bg) 100%);
-  color: white;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--color-site-bg);
+  color: var(--color-foreground);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Light theme overrides */
+[data-theme="light"] {
+  --color-background:        #fafaf9;
+  --color-foreground:        #111110;
+  --color-card:              #f3f3f2;
+  --color-card-foreground:   #111110;
+  --color-primary:           #111110;
+  --color-primary-foreground:#fafaf9;
+  --color-muted-foreground:  oklch(50% 0 0);
+  --color-border:            oklch(0% 0 0 / 0.08);
+  --color-site-bg:           #fafaf9;
+  --color-site-panel:        #f3f3f2;
+  --color-site-border:       oklch(0% 0 0 / 0.08);
+  --color-syn-plain:         #383a42;
+  --color-syn-keyword:       #a626a4;
+  --color-syn-string:        #50a14f;
+  --color-syn-comment:       #a0a1a7;
+  --color-syn-tag:           #e45649;
+  --color-syn-number:        #986801;
+}
+
+[data-theme="light"] body {
+  background: var(--color-site-bg);
+  color: var(--color-foreground);
+}
+
+/* Range input fallback */
+input[type="range"] {
+  accent-color: var(--color-foreground);
+}
+
+/* ── Shiki dual-theme (defaultColor: false) ──────────────────────────────────
+   Shiki emits --shiki-dark and --shiki-light CSS vars on each <span>.
+   We apply the right one based on the active data-theme attribute.
+   The pre background is overridden in CodeBlock to use --color-card.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Default: dark */
+.shiki {
+  background-color: var(--color-card) !important;
+  margin: 0 !important;
+  padding: 0.625rem 0.875rem !important;
+  color: var(--shiki-dark);
+}
+
+[data-theme="light"] .shiki {
+  color: var(--shiki-light);
+}
+
+.shiki code {
+  display: block;
+  font-size: 12px;
+  line-height: 1.08;
+}
+
+.shiki span {
+  color: var(--shiki-dark, inherit);
+}
+
+.shiki .line {
+  display: block;
+  line-height: 1.08;
+  min-height: 0.98em;
+}
+
+/* Light mode */
+[data-theme="light"] .shiki span {
+  color: var(--shiki-light, inherit);
+}
+
+/* Ensure line wrappers don't collapse */
+.shiki .line { display: block; min-height: 0.98em; }

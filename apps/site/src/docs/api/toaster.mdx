@@ -1,0 +1,42 @@
+---
+title: Toaster
+description: Mount once at your app's root. Controls positioning, stacking, theme, and animation behaviour.
+section: api
+---
+
+## Usage
+
+```tsx
+import { Toaster } from "ezlet";
+
+<Toaster
+  position="top-right"
+  visibleToasts={4}
+  expand={false}
+  gap={14}
+  offset={16}
+  theme="dark"
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `position` | `ToastPosition` | `"bottom-right"` | Where toasts appear on screen. |
+| `visibleToasts` | `number` | `3` | Max number of toasts visible at once. |
+| `expand` | `boolean` | `false` | Show all toasts expanded by default. |
+| `gap` | `number` | `14` | Gap between stacked toasts in pixels. |
+| `offset` | `number` | `16` | Margin from the viewport edge. |
+| `theme` | `ToastTheme` | `"system"` | `"dark"`, `"light"`, or `"system"`. |
+| `transition` | `ToasterTransition` | — | Spring presets for all animations. |
+| `classNames` | `ToastClassNames` | — | Slot-based class overrides. |
+| `unstyled` | `boolean` | `false` | Strip the base skin entirely. |
+
+## Position values
+
+```ts
+type ToastPosition =
+  | "top-left"    | "top-center"    | "top-right"
+  | "bottom-left" | "bottom-center" | "bottom-right";
+```

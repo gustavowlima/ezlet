@@ -1,0 +1,57 @@
+---
+title: toast
+description: The toast function triggers notifications. Returns an id you can use to update or dismiss.
+section: api
+---
+
+## Methods
+
+```ts
+import { toast } from "ezlet";
+
+// Variants
+toast("Default notification");
+toast.success("Changes saved");
+toast.error("Something went wrong");
+toast.info("Update available");
+toast.loading("Processing…");
+
+// Promise — chains loading → success / error automatically
+toast.promise(fetch("/api/save"), {
+  messages: {
+    loading: "Saving…",
+    success: "Saved!",
+    error: (e) => `Failed: ${e.message}`,
+  },
+});
+
+// Update an existing toast
+const id = toast.loading("Uploading…");
+toast.update(id, { title: "Done!", variant: "success" });
+
+// Dismiss
+toast.dismiss(id);   // one
+toast.dismiss();     // all
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `title` | `ReactNode` | — | Primary text. |
+| `description` | `ReactNode` | — | Secondary line below title. |
+| `variant` | `ToastVariant` | `"neutral"` | `"success"` \| `"error"` \| `"info"` \| `"loading"`. |
+| `duration` | `number` | `4200` | Auto-dismiss delay in ms. `0` = persistent. |
+| `action` | `ToastAction` | — | `{ label, onClick }` button appended to the toast. |
+| `onDismiss` | `(id: string) => void` | — | Called when the toast is dismissed. |
+| `id` | `string` | auto | Force a specific id (useful for deduplication). |
+
+## toast.promise options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `messages.loading` | `ReactNode` | Shown while the promise is pending. |
+| `messages.success` | `ReactNode \| (data) => ReactNode` | Shown on resolve. |
+| `messages.error` | `ReactNode \| (err) => ReactNode` | Shown on reject. |
+| `success` | `Partial<ToastOptions>` | Extra options applied on resolve. |
+| `error` | `Partial<ToastOptions>` | Extra options applied on reject. |

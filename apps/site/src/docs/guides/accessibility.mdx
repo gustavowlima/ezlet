@@ -1,0 +1,39 @@
+---
+title: Accessibility
+description: Live regions, keyboard dismissal, and reduced-motion support — all built in, zero configuration.
+section: guides
+---
+
+## Live regions
+
+Informational toasts use `role="status"` (polite); errors use `role="alert"` (assertive).
+
+Screen readers announce the toast content without interrupting the user's current action. The assertive mode for errors means critical failures are announced immediately.
+
+```ts
+toast.success("File saved");   // role="status"  — polite
+toast.error("Upload failed");  // role="alert"   — assertive
+```
+
+## Keyboard
+
+| Key | Action |
+|-----|--------|
+| `Tab` | Focus the toast's action button (if present). |
+| `Escape` | Dismiss the focused toast. |
+| `Enter` / `Space` | Activate the focused action button. |
+
+## Reduced motion
+
+When `prefers-reduced-motion: reduce` is active, all spring animations are replaced with instant layout changes. No configuration required — Ezlet reads the media query automatically.
+
+```css
+/* Ezlet respects this automatically */
+@media (prefers-reduced-motion: reduce) {
+  /* All transitions become instant */
+}
+```
+
+## Semantic structure
+
+Each toast renders as a `<li>` inside a `<ol aria-live>` region. The `aria-label` on the list describes its purpose to assistive technology.

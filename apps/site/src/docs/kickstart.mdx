@@ -1,0 +1,94 @@
+---
+title: Getting Started
+description: Ezlet is a tiny, opinionated toast component for React. Dynamic Island morphing, spring physics, and a minimal API — beautiful by default.
+section: basics
+---
+
+import { toast } from "ezlet"
+
+## Installation
+
+```bash
+bun add ezlet
+# or
+npm install ezlet
+```
+
+## Quick Setup
+
+Add `Toaster` to your app's root layout, then call `toast` from anywhere. Base styles are injected automatically.
+
+```tsx
+import { Toaster, toast } from "ezlet";
+export default function App() {
+  return (
+    <>
+      <Toaster position="top-right" />
+      <YourApp />
+    </>
+  );
+}
+```
+
+## Fire a Toast
+
+<TabPanel
+  preview={
+    <div className="flex flex-wrap justify-center gap-2">
+      <PreviewBtn label="Success" onClick={() => toast.success("Saved")} />
+      <PreviewBtn label="Error" onClick={() => toast.error("Something went wrong")} />
+      <PreviewBtn label="Warning" onClick={() => toast.info("Heads up")} />
+      <PreviewBtn label="Info" onClick={() => toast("Queued")} />
+    </div>
+  }
+  code={`toast.success("Saved");
+toast.error("Something went wrong");
+toast.info("Heads up");
+toast("Queued");`}
+/>
+
+## Action Toast
+
+Toasts can include a button for user interaction.
+
+<TabPanel
+  preview={
+    <PreviewBtn
+      label="Try it"
+      onClick={() => toast("File deleted", {
+        action: { label: "Undo", onClick: () => toast.success("Restored") },
+      })}
+    />
+  }
+  code={`toast("File deleted", {
+  action: {
+    label: "Undo",
+    onClick: () => restoreFile(),
+  },
+});`}
+/>
+
+## Promise Toast
+
+Chain loading, success, and error states from a single promise.
+
+<TabPanel
+  preview={
+    <PreviewBtn
+      label="Try it"
+      onClick={() =>
+        void toast.promise(
+          new Promise((resolve) => setTimeout(() => resolve("backup.sql"), 2000)),
+          { messages: { loading: "Saving…", success: "Saved!", error: "Failed" } },
+        )
+      }
+    />
+  }
+  code={`toast.promise(saveData(), {
+  messages: {
+    loading: "Saving…",
+    success: "Saved!",
+    error: "Failed",
+  },
+});`}
+/>

@@ -10,17 +10,29 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@mdx-js/react": "^3.1.0",
     "@tanstack/react-router": "^1.114.3",
+    "clsx": "^2.1.1",
     "ezlet": "workspace:*",
+    "lucide-react": "^0.511.0",
     "motion": "^12.42.0",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "shiki": "^4.3.0",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",
+    "@mdx-js/rollup": "^3.1.0",
+    "@shikijs/rehype": "^3.4.0",
     "@tailwindcss/vite": "^4.1.17",
+    "@types/mdx": "^2.0.13",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "rehype-slug": "^6.0.0",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-mdx-frontmatter": "^5.0.0",
     "tailwindcss": "^4.1.17",
     "typescript": "^5",
     "vite": "^8.0.16",

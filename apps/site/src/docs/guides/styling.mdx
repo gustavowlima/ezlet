@@ -1,0 +1,62 @@
+---
+title: Styling
+description: Customize Ezlet with CSS variables, the classNames prop, or fully unstyled rendering.
+section: guides
+---
+
+## CSS variables
+
+Override `--ezlet-*` tokens for theme-level changes. These affect all toasts globally.
+
+```css
+:root {
+  --ezlet-bg: #1a1a1a;
+  --ezlet-color: #ffffff;
+  --ezlet-border-radius: 14px;
+  --ezlet-border: 1px solid rgba(255, 255, 255, 0.08);
+  --ezlet-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+```
+
+## classNames
+
+Target named slots — `toast`, `title`, `description`, `action`, `icon`:
+
+```tsx
+<Toaster
+  classNames={{
+    toast: "border border-zinc-800 bg-zinc-900",
+    title: "font-semibold text-white",
+    description: "text-zinc-400",
+    action: "bg-zinc-700 hover:bg-zinc-600 text-white",
+  }}
+/>
+```
+
+## Unstyled
+
+Strip the base skin entirely and supply your own classes:
+
+```tsx
+<Toaster
+  unstyled
+  classNames={{
+    toast: [
+      "rounded-2xl border border-zinc-800 bg-zinc-950",
+      "text-zinc-50 shadow-2xl px-4 py-3",
+    ].join(" "),
+    title: "text-sm font-medium",
+    description: "text-sm text-zinc-400 mt-0.5",
+  }}
+/>
+```
+
+## Per-toast overrides
+
+Pass `className` on individual `toast()` calls to override one notification:
+
+```ts
+toast.success("Saved", {
+  className: "border-emerald-500/30 bg-emerald-950",
+});
+```

@@ -1,0 +1,50 @@
+---
+title: Tailwind
+description: Ezlet doesn't depend on Tailwind, but it exposes stable data-* hooks that make Tailwind customization straightforward.
+section: guides
+---
+
+## unstyled + classNames
+
+The fastest path to a fully custom look with Tailwind:
+
+```tsx
+<Toaster
+  unstyled
+  classNames={{
+    toast: "rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-50 shadow-2xl",
+    title: "text-sm font-medium",
+    description: "text-sm text-zinc-400",
+    action: "rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs font-medium hover:bg-zinc-700",
+    icon: "text-current",
+  }}
+/>
+```
+
+## data-* attributes
+
+Stable `data-*` hooks let you target variant and state in CSS or Tailwind variants:
+
+```css
+/* Variant-specific backgrounds */
+[data-variant="success"] { --ezlet-bg: #052e16; }
+[data-variant="error"]   { --ezlet-bg: #450a0a; }
+[data-variant="info"]    { --ezlet-bg: #0c1a4a; }
+
+/* Expanded state */
+[data-expanded="true"] .toast-icon {
+  transform: scale(1.1);
+}
+```
+
+## Tailwind arbitrary variants
+
+```tsx
+// v3+: target data attributes with arbitrary variants
+<Toaster
+  unstyled
+  classNames={{
+    toast: "data-[variant=success]:border-emerald-500/30 data-[variant=error]:border-red-500/30",
+  }}
+/>
+```

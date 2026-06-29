@@ -1,0 +1,46 @@
+---
+title: Motion
+description: Ezlet uses spring physics for all transitions. Configure the feel via the transition prop on Toaster.
+section: guides
+---
+
+## Transition config
+
+Each animation phase — shape morph, stack reflow, expand toggle, icon swap — has its own spring:
+
+```ts
+import type { ToasterTransition } from "ezlet";
+
+const transition: ToasterTransition = {
+  morph:  { type: "spring", bounce: 0.08, duration: 0.75 }, // pill shape change
+  stack:  { type: "spring", bounce: 0.06, duration: 0.68 }, // stack reflow
+  expand: { type: "spring", bounce: 0.08, duration: 0.72 }, // expand/collapse
+  icon:   { type: "spring", bounce: 0.20, duration: 0.55 }, // icon swap
+};
+
+<Toaster transition={transition} />
+```
+
+## Built-in presets
+
+| Preset | Feel | Best for |
+|--------|------|----------|
+| `liquid` | Very soft, slow morphs | Ambient, background notifications |
+| `standard` | Balanced *(default)* | Most apps |
+| `bouncy` | High energy, visible bounce | Playful UIs |
+| `snappy` | Near-instant | Dense dashboards, dev tools |
+
+Use one of the presets from the playground as a starting point:
+
+```ts
+const liquid: ToasterTransition = {
+  morph:  { type: "spring", bounce: 0.08, duration: 0.75 },
+  stack:  { type: "spring", bounce: 0.06, duration: 0.68 },
+  expand: { type: "spring", bounce: 0.08, duration: 0.72 },
+  icon:   { type: "spring", bounce: 0.20, duration: 0.55 },
+};
+```
+
+## Reduced motion
+
+When `prefers-reduced-motion: reduce` is active, the spring parameters are ignored and all transitions become instant. This is handled automatically — no additional setup required.
