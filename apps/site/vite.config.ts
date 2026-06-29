@@ -44,6 +44,6 @@ export default defineConfig({
     fs: { allow: [path.resolve(rootDir, "../..")] },
   },
   build: {
-    outDir: "../../site-dist",
+    outDir: "dist",
   },
 });
