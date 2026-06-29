@@ -6,6 +6,7 @@ import {
   type ToastTheme,
   toast,
 } from "ezlet";
+import { motion } from "motion/react";
 import { type CSSProperties, type ReactNode, useMemo, useState } from "react";
 import { ShikiCodeBlock } from "@/components/docs/shiki-code-block";
 import { Button, type ButtonState, StatefulButton } from "@/components/motion/button";
@@ -948,7 +949,6 @@ function SliderCard({
 function CircularProgress({ value, color = "stroke-indigo-500" }: { value: number; color?: string }) {
   const radius = 12;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (value / 100) * circumference;
 
   return (
     <div className="relative flex items-center justify-center size-8 shrink-0">
@@ -958,42 +958,43 @@ function CircularProgress({ value, color = "stroke-indigo-500" }: { value: numbe
           cy="16"
           r={radius}
           stroke="currentColor"
-          strokeWidth="3"
+          strokeWidth="2.5"
           fill="transparent"
-          className="text-white/10"
+          className="text-white/5"
         />
-        <circle
+        <motion.circle
           cx="16"
           cy="16"
           r={radius}
           stroke="currentColor"
-          strokeWidth="3"
+          strokeWidth="2.5"
           fill="transparent"
           strokeDasharray={circumference}
-          style={{
-            strokeDashoffset: offset,
-            transition: "stroke-dashoffset 0.3s ease",
-          }}
+          animate={{ strokeDashoffset: circumference - (value / 100) * circumference }}
+          transition={{ type: "spring", bounce: 0, duration: 0.8 }}
           strokeLinecap="round"
           className={color}
         />
       </svg>
-      <span className="absolute text-[8px] font-bold text-white/90 leading-none">{value}%</span>
+      <span className="absolute text-[8px] font-medium text-white/50 leading-none tabular-nums">
+        {Math.round(value)}%
+      </span>
     </div>
   );
 }
 
 function ProgressBar({ value, speed, color }: { value: number; speed: string; color: string }) {
   return (
-    <div className="mt-1 flex w-full max-w-44 flex-col gap-1.5">
-      <div className="flex justify-between text-[10px] text-white/35 font-mono">
+    <div className="mt-1 flex w-full flex-col gap-1.5">
+      <div className="flex justify-between text-[10px] text-white/40 font-medium tabular-nums">
         <span>{value}%</span>
         <span>{speed}</span>
       </div>
-      <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-        <div
-          className={`h-full ${color} rounded-full transition-all duration-300`}
-          style={{ width: `${value}%` }}
+      <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+        <motion.div
+          className={`h-full ${color} rounded-full`}
+          animate={{ width: `${value}%` }}
+          transition={{ type: "spring", bounce: 0, duration: 0.8 }}
         />
       </div>
     </div>

@@ -170,7 +170,11 @@ export function ToastItem({
                   initial={{ opacity: 0, height: 0, marginTop: 0 }}
                   animate={{ opacity: 1, height: "auto", marginTop: 2 }}
                   exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  transition={{ type: "spring", bounce: 0.1, duration: 0.5 }}
+                  transition={{
+                    opacity: { duration: 0.2, delay: 0.15 },
+                    height: { type: "spring", bounce: 0, duration: 0.4, delay: 0.15 },
+                    marginTop: { duration: 0.2, delay: 0.15 },
+                  }}
                   className={cx("ezlet-description", classNames?.description)}
                 >
                   {description}
