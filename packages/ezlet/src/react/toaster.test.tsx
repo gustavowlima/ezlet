@@ -11,7 +11,6 @@ describe("Toaster", () => {
     toastStore.clear();
     resetToastCounterForTests();
     document.body.innerHTML = "";
-    document.head.querySelector("#ezlet-styles")?.remove();
   });
 
   afterEach(() => {
@@ -35,20 +34,6 @@ describe("Toaster", () => {
     expect(document.body.querySelector("[data-ezlet-toaster]")).toBeTruthy();
     expect(document.body.querySelector("[data-ezlet-viewport]")).toBeTruthy();
     expect(document.body.querySelector("[data-ezlet-toast]")).toBeTruthy();
-  });
-
-  test("injects base styles once by default", () => {
-    const { rerender } = render(<Toaster />);
-
-    act(() => {
-      toast("Styled");
-    });
-
-    expect(document.head.querySelectorAll("#ezlet-styles")).toHaveLength(1);
-
-    rerender(<Toaster position="bottom-right" />);
-
-    expect(document.head.querySelectorAll("#ezlet-styles")).toHaveLength(1);
   });
 
   test("uses alert role for errors", () => {

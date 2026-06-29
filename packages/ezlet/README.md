@@ -17,8 +17,8 @@ export function App() {
 }
 ```
 
-Base styles are injected automatically by the toaster. Customize the default skin with CSS variables
-or slot classes:
+Base styles are included by the package import. Customize the default skin with CSS variables or
+slot classes:
 
 ```tsx
 <Toaster

@@ -1,11 +1,10 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useInsertionEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { getStackTransform } from "../animation/geometry";
 import { expandSpring, reducedMotionTransition, stackSpring } from "../animation/springs";
 import { toast } from "../core/toast";
 import type { ToasterProps, ToastId, ToastT } from "../core/types";
-import { ensureEzletStyles } from "../styles/inject-styles";
 import { cx } from "../styles/utils";
 import { Ezlet } from "./ezlet";
 import { useDocumentVisibilityPause, useToasts } from "./hooks";
@@ -46,10 +45,6 @@ export function Toaster({
   const stackTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.stack ?? stackSpring);
   const itemTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.expand ?? expandSpring);
   const visible = useMemo(() => getVisibleToasts(toasts, visibleToasts), [toasts, visibleToasts]);
-
-  useInsertionEffect(() => {
-    ensureEzletStyles();
-  }, []);
 
   const reportHeight = useCallback((id: ToastId, height: number) => {
     setHeights((prev) => {

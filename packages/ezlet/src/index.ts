@@ -1,3 +1,5 @@
+import "./styles/ezlet.css";
+
 export { createToastStore, resetToastCounterForTests, toastStore } from "./core/store";
 export { PausableTimer } from "./core/timers";
 export { clearToastTimersForTests, toast } from "./core/toast";
