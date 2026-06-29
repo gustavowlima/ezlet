@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { morphSpring, reducedMotionTransition } from "../animation/springs";
 import { toast } from "../core/toast";
 import type { ToastClassNames, ToasterProps, ToasterTransition, ToastId, ToastT } from "../core/types";
+import { cx } from "../styles/utils";
 import { MorphContent } from "./morph-content";
 import { ToastItem } from "./toast-item";
 
@@ -18,7 +19,7 @@ interface EzletProps {
   expanded?: boolean;
 }
 
-import { cx } from "../styles/utils";
+const EXPANDED_CONTENT_REVEAL_MS = 260;
 
 function useMeasuredSize() {
   const ref = useRef<HTMLDivElement>(null);
@@ -59,7 +60,6 @@ function useMeasuredSize() {
   return [ref, size] as const;
 }
 
-
 export function Ezlet({
   item,
   classNames,
@@ -78,6 +78,7 @@ export function Ezlet({
   const isTest = typeof process !== "undefined" && process.env.NODE_ENV === "test";
   const [hovered, setHovered] = useState(false);
   const [autoExpanded, setAutoExpanded] = useState(isTest);
+  const [expandedContentVisible, setExpandedContentVisible] = useState(isTest);
 
   useEffect(() => {
     if (isTest) {
@@ -103,6 +104,25 @@ export function Ezlet({
   }, [collapsedLayer, isTest]);
 
   const expanded = !collapsedLayer && (expandedProp || autoExpanded || hovered);
+
+  useEffect(() => {
+    if (!expanded) {
+      setExpandedContentVisible(false);
+      return;
+    }
+
+    if (shouldReduceMotion || isTest) {
+      setExpandedContentVisible(true);
+      return;
+    }
+
+    setExpandedContentVisible(false);
+    const revealTimer = setTimeout(() => {
+      setExpandedContentVisible(true);
+    }, EXPANDED_CONTENT_REVEAL_MS);
+
+    return () => clearTimeout(revealTimer);
+  }, [expanded, isTest, shouldReduceMotion]);
 
   // Report the pill's real height so the toaster can lay out the expanded list.
   useEffect(() => {
@@ -149,6 +169,12 @@ export function Ezlet({
           toast.dismiss(item.id);
         }
       }}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setHovered(false);
+        }
+      }}
+      onFocusCapture={() => setHovered(true)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       transition={activeTransition}
@@ -162,7 +188,7 @@ export function Ezlet({
               classNames={classNames}
               collapsedLayer={collapsedLayer}
               expanded={expanded}
-              hovered={hovered}
+              expandedContentVisible={expandedContentVisible}
               icons={icons}
               item={item}
               stacked={stacked}

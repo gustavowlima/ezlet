@@ -108,8 +108,6 @@ export interface ToasterProps {
   gap?: number;
   offset?: number;
   duration?: number;
-  injectStyles?: boolean;
-  unstyled?: boolean;
   className?: string;
   classNames?: ToastClassNames;
   icons?: Partial<Record<ToastVariant, ToastIconRenderer>>;

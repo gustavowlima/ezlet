@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { cx } from "../styles/utils";
 
 /** How long the exiting layer lingers while it blurs out. Keep in sync with CSS. */
 const EXIT_MS = 380;
@@ -9,7 +10,7 @@ interface Layer {
 }
 
 interface MorphContentProps {
-  /** Changes whenever the rendered content changes (variant/title/description). */
+  /** Changes when the layout mode changes and should crossfade. */
   contentKey: string;
   children: ReactNode;
   reduceMotion?: boolean;
@@ -32,7 +33,10 @@ export function MorphContent({ contentKey, children, reduceMotion }: MorphConten
   if (contentKey !== lastKey.current) {
     const nextLayers = reduceMotion
       ? [{ key: contentKey, node: children }]
-      : [{ key: lastKey.current, node: lastChildren.current }, { key: contentKey, node: children }].slice(-2);
+      : [
+          { key: lastKey.current, node: lastChildren.current },
+          { key: contentKey, node: children },
+        ].slice(-2);
 
     setLayers(nextLayers);
     lastKey.current = contentKey;
@@ -52,7 +56,14 @@ export function MorphContent({ contentKey, children, reduceMotion }: MorphConten
     }
 
     const timer = setTimeout(() => {
-      setLayers((prev) => (prev.length > 1 ? [prev[prev.length - 1]!] : prev));
+      setLayers((prev) => {
+        if (prev.length <= 1) {
+          return prev;
+        }
+
+        const last = prev[prev.length - 1];
+        return last ? [last] : prev;
+      });
     }, EXIT_MS);
 
     return () => clearTimeout(timer);
@@ -64,6 +75,7 @@ export function MorphContent({ contentKey, children, reduceMotion }: MorphConten
         const isLast = index === layers.length - 1;
         const isFirstLayerEver = firstMount.current && isLast;
         const animate = !isFirstLayerEver && !reduceMotion;
+        const node = isLast ? children : layer.node;
 
         return (
           <div
@@ -74,12 +86,10 @@ export function MorphContent({ contentKey, children, reduceMotion }: MorphConten
               animate && (isLast ? "ezlet-morph-enter" : "ezlet-morph-exit"),
             )}
           >
-            {layer.node}
+            {node}
           </div>
         );
       })}
     </div>
   );
 }
-
-import { cx } from "../styles/utils";

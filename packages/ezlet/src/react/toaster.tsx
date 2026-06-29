@@ -6,6 +6,7 @@ import { expandSpring, reducedMotionTransition, stackSpring } from "../animation
 import { toast } from "../core/toast";
 import type { ToasterProps, ToastId, ToastT } from "../core/types";
 import { ensureEzletStyles } from "../styles/inject-styles";
+import { cx } from "../styles/utils";
 import { Ezlet } from "./ezlet";
 import { useDocumentVisibilityPause, useToasts } from "./hooks";
 
@@ -13,8 +14,6 @@ import { useDocumentVisibilityPause, useToasts } from "./hooks";
 const PEEK = 14;
 /** Fallback height before a toast has been measured. */
 const DEFAULT_HEIGHT = 56;
-
-import { cx } from "../styles/utils";
 
 function getVerticalSide(position: NonNullable<ToasterProps["position"]>) {
   return position.startsWith("bottom") ? "bottom" : "top";
@@ -31,8 +30,6 @@ export function Toaster({
   expand,
   gap = 14,
   offset = 16,
-  injectStyles = true,
-  unstyled,
   className,
   classNames,
   icons,
@@ -51,10 +48,8 @@ export function Toaster({
   const visible = useMemo(() => getVisibleToasts(toasts, visibleToasts), [toasts, visibleToasts]);
 
   useInsertionEffect(() => {
-    if (injectStyles && !unstyled) {
-      ensureEzletStyles();
-    }
-  }, [injectStyles, unstyled]);
+    ensureEzletStyles();
+  }, []);
 
   const reportHeight = useCallback((id: ToastId, height: number) => {
     setHeights((prev) => {
@@ -89,7 +84,6 @@ export function Toaster({
 
   const heightOf = useCallback((id: ToastId) => heights[String(id)] ?? DEFAULT_HEIGHT, [heights]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: heightOf is a stable callback here that depends on heights
   const totalHeight = useMemo(() => {
     return visible.reduce((sum, item) => sum + heightOf(item.id), 0) + gap * Math.max(visible.length - 1, 0);
   }, [visible, heightOf, gap]);
@@ -127,7 +121,6 @@ export function Toaster({
       data-expanded={expanded ? "true" : "false"}
       data-ezlet-toaster=""
       data-position={position}
-      data-unstyled={unstyled ? "true" : "false"}
       onMouseEnter={() => {
         setHovered(true);
         pauseAll();
