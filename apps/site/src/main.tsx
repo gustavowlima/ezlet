@@ -239,7 +239,7 @@ export function App() {
         <div
           className="relative select-none overflow-hidden"
           style={{
-            width: `${w}px`,
+            width: isExpanded ? "min(380px, calc(100vw - 32px))" : `${w}px`,
             height: `${h}px`,
             // resize starts AFTER outgoing content has faded (160ms delay both ways)
             transition: `width 380ms ${ease} 160ms, height 380ms ${ease} 160ms`,
@@ -467,7 +467,13 @@ toast.update(id, {
       code: `toast.custom((item) => {
   const expanded = !!item.expanded;
   return (
-    <div className={\`relative overflow-hidden \${expanded ? "w-[380px]" : "w-[280px]"}\`}>
+    <div
+      className="relative overflow-hidden"
+      style={{
+        width: expanded ? "min(380px, calc(100vw - 32px))" : "280px",
+        transition: "width 380ms cubic-bezier(0.32,0.72,0,1) 160ms"
+      }}
+    >
       {/* Compact */}
       <div style={{ position: expanded ? "absolute" : "relative" }}
            className={\`flex items-center gap-3 p-3 \${expanded ? "opacity-0" : ""}\`}>
