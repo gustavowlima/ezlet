@@ -1,6 +1,7 @@
 import type { Root } from "react-dom/client";
 import { createRoot } from "react-dom/client";
 import { SiteRouter } from "./router";
+import "ezlet/styles.css";
 
 declare global {
   interface Window {
