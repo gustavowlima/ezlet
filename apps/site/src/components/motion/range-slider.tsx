@@ -1,7 +1,7 @@
 // Adapted from beui.dev/components/motion/range-slider
 
 import { motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { SPRING_BOUNCY, SPRING_GLIDE } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 

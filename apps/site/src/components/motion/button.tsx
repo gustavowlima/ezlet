@@ -213,6 +213,7 @@ function TextSlot({ value, children }: { value: string; children: ReactNode }) {
             >
               {label.split("").map((char, i) => (
                 <motion.span
+                  // biome-ignore lint/suspicious/noArrayIndexKey: Letter order is stable and the index drives the stagger.
                   key={i}
                   custom={i * CASCADE_STAGGER}
                   variants={CASCADE_LETTER_VARIANTS}

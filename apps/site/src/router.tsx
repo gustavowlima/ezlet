@@ -14,9 +14,8 @@ import type { ComponentType, ReactNode } from "react";
 import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { mdxComponents } from "@/docs/mdx-components";
 import type { DocMeta } from "@/docs/types";
-import { App } from "./main";
 import { Home } from "./home";
-
+import { App } from "./main";
 
 // ── MDX page imports ──────────────────────────────────────────────────────────
 

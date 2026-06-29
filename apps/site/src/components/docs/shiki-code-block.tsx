@@ -52,6 +52,7 @@ export function ShikiCodeBlock({ code, lang = "tsx" }: { code: string; lang?: Bu
     <div className="overflow-hidden rounded-xl bg-[var(--color-card)]">
       <div
         suppressHydrationWarning
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki returns trusted HTML for static code snippets.
         dangerouslySetInnerHTML={
           html
             ? { __html: html }

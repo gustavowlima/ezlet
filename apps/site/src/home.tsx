@@ -1,6 +1,6 @@
-import { Toaster, toast } from "ezlet";
-import { Link } from "@tanstack/react-router";
 import { IconAccessible, IconBolt, IconHexagon, IconPalette } from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
+import { Toaster, toast } from "ezlet";
 
 // ── Mini demo toasts ──────────────────────────────────────────────────────────
 

@@ -2,28 +2,28 @@
 
 @theme {
   /* Site palette */
-  --color-background:        #0a0a0b;
-  --color-foreground:        #f8f8f8;
-  --color-card:              #111216;
-  --color-card-foreground:   #f8f8f8;
-  --color-primary:           #f8f8f8;
-  --color-primary-foreground:#0a0a0b;
-  --color-muted-foreground:  oklch(55% 0 0);
-  --color-border:            oklch(100% 0 0 / 0.07);
-  --color-ring:              oklch(100% 0 0 / 0.2);
+  --color-background: #0a0a0b;
+  --color-foreground: #f8f8f8;
+  --color-card: #111216;
+  --color-card-foreground: #f8f8f8;
+  --color-primary: #f8f8f8;
+  --color-primary-foreground: #0a0a0b;
+  --color-muted-foreground: oklch(55% 0 0);
+  --color-border: oklch(100% 0 0 / 0.07);
+  --color-ring: oklch(100% 0 0 / 0.2);
 
   /* Site-specific */
-  --color-site-bg:           #0a0a0b;
-  --color-site-panel:        #111216;
-  --color-site-border:       oklch(100% 0 0 / 0.07);
+  --color-site-bg: #0a0a0b;
+  --color-site-panel: #111216;
+  --color-site-border: oklch(100% 0 0 / 0.07);
 
   /* Syntax highlighting */
   --color-syn-keyword: #c678dd;
-  --color-syn-string:  #98c379;
+  --color-syn-string: #98c379;
   --color-syn-comment: #5c6370;
-  --color-syn-tag:     #e06c75;
-  --color-syn-number:  #d19a66;
-  --color-syn-plain:   #abb2bf;
+  --color-syn-tag: #e06c75;
+  --color-syn-number: #d19a66;
+  --color-syn-plain: #abb2bf;
 }
 
 html,
@@ -81,8 +81,11 @@ input[type="range"] {
 
 /* Default: dark */
 .shiki {
+  /* biome-ignore lint/complexity/noImportantStyles: Shiki emits inline pre styles, so the theme override must win. */
   background-color: var(--color-card) !important;
+  /* biome-ignore lint/complexity/noImportantStyles: Shiki emits inline pre styles, so the layout reset must win. */
   margin: 0 !important;
+  /* biome-ignore lint/complexity/noImportantStyles: Shiki emits inline pre styles, so the layout reset must win. */
   padding: 0.625rem 0.875rem !important;
   color: var(--shiki-dark);
 }
