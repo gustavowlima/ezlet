@@ -948,6 +948,7 @@ function ProgressBar({ value, speed, color }: { value: number; speed: string; co
       <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
         <motion.div
           className={`h-full ${color} rounded-full`}
+          initial={{ width: "0%" }}
           animate={{ width: `${value}%` }}
           transition={{ type: "spring", bounce: 0, duration: 0.8 }}
         />

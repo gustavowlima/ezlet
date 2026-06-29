@@ -157,7 +157,7 @@ export function Ezlet({
           },
           height: {
             ...baseTransition,
-            delay: expanded ? 0.12 : 0,
+            delay: 0,
           },
         };
   const contentKey = `${item.variant}:${collapsedLayer ? "layer" : "full"}`;
