@@ -53,40 +53,42 @@ export function Home() {
       <Toaster position="bottom-center" />
 
       {/* ── Hero ── */}
-      <section className="mx-auto flex max-w-[680px] flex-col items-center px-6 pt-24 pb-16 text-center">
-        <h1 className="mb-4 text-[40px] font-bold leading-[1.12] tracking-tight text-[var(--color-foreground)]">
+      <section className="mx-auto flex max-w-[680px] flex-col items-center px-4 pt-16 pb-12 text-center sm:px-6 sm:pt-24 sm:pb-16">
+        <h1 className="mb-4 text-[34px] font-bold leading-[1.08] tracking-tight text-[var(--color-foreground)] sm:text-[40px] sm:leading-[1.12]">
           Toast that morphs
           <br />
           <span className="opacity-40">like a Dynamic Island</span>
         </h1>
 
-        <p className="mb-8 max-w-[44ch] text-[15px] leading-[1.6] text-[var(--color-muted-foreground)]">
+        <p className="mb-8 max-w-[44ch] text-[14px] leading-[1.6] text-[var(--color-muted-foreground)] sm:text-[15px]">
           Ezlet is a headless-friendly React toast library. Compact pill by default, expands to a card on
           hover — smooth spring animations included.
         </p>
 
         {/* CTAs */}
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <Link
             to="/docs"
             viewTransition
-            className="inline-flex h-9 items-center gap-2 rounded-lg bg-[var(--color-foreground)] px-4 text-[13.5px] font-semibold text-[var(--color-primary-foreground)] transition-opacity hover:opacity-80"
+            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-[var(--color-foreground)] px-4 text-[13.5px] font-semibold text-[var(--color-primary-foreground)] transition-opacity hover:opacity-80 sm:w-auto"
           >
             Get started
           </Link>
           <button
             type="button"
             onClick={fireDemo}
-            className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-[var(--color-border)] bg-transparent px-4 text-[13.5px] font-medium text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-foreground)]/20 hover:text-[var(--color-foreground)]"
+            className="inline-flex h-9 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-[var(--color-border)] bg-transparent px-4 text-[13.5px] font-medium text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-foreground)]/20 hover:text-[var(--color-foreground)] sm:w-auto"
           >
             See it live
           </button>
         </div>
 
         {/* Install command */}
-        <div className="mt-10 flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-2.5">
+        <div className="mt-10 flex w-full max-w-full items-center gap-2 overflow-x-auto rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-2.5 sm:w-auto sm:max-w-fit">
           <span className="select-none text-[12px] text-[var(--color-muted-foreground)]/50">$</span>
-          <code className="text-[12.5px] font-mono text-[var(--color-muted-foreground)]">{INSTALL}</code>
+          <code className="min-w-0 whitespace-nowrap text-[12.5px] font-mono text-[var(--color-muted-foreground)]">
+            {INSTALL}
+          </code>
           <button
             type="button"
             aria-label="Copy install command"
@@ -115,12 +117,12 @@ export function Home() {
       </section>
 
       {/* ── Divider ── */}
-      <div className="mx-auto max-w-[680px] border-t border-[var(--color-border)] px-6" />
+      <div className="mx-auto max-w-[680px] border-t border-[var(--color-border)] px-4 sm:px-6" />
 
       {/* ── Features ── */}
-      <section className="mx-auto grid max-w-[680px] grid-cols-2 gap-px px-6 py-16">
+      <section className="mx-auto grid max-w-[680px] grid-cols-1 gap-px px-4 py-12 sm:grid-cols-2 sm:px-6 sm:py-16">
         {features.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="flex flex-col gap-2 rounded-xl p-5">
+          <div key={title} className="flex flex-col gap-2 rounded-xl p-4 sm:p-5">
             <Icon aria-hidden="true" size={22} stroke={1.8} className="text-[var(--color-foreground)]" />
             <p className="text-[13.5px] font-semibold text-[var(--color-foreground)]">{title}</p>
             <p className="text-[13px] leading-[1.55] text-[var(--color-muted-foreground)]">{desc}</p>
@@ -129,8 +131,8 @@ export function Home() {
       </section>
 
       {/* ── Footer CTA ── */}
-      <div className="mx-auto max-w-[680px] border-t border-[var(--color-border)] px-6" />
-      <section className="mx-auto flex max-w-[680px] items-center justify-between px-6 py-8">
+      <div className="mx-auto max-w-[680px] border-t border-[var(--color-border)] px-4 sm:px-6" />
+      <section className="mx-auto flex max-w-[680px] flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p className="text-[13px] text-[var(--color-muted-foreground)]">Open source — MIT licence</p>
         <div className="flex items-center gap-4">
           <a

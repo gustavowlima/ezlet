@@ -13,7 +13,7 @@ export const mdxComponents: MDXComponents = {
   h2: ({ children, id }) => (
     <h2
       id={id}
-      className="scroll-mt-20 mb-1.5 text-[19px] font-semibold tracking-tight text-[var(--color-foreground)]"
+      className="scroll-mt-20 mb-1.5 text-[18px] font-semibold tracking-tight text-[var(--color-foreground)] sm:text-[19px]"
     >
       {children}
     </h2>
@@ -22,7 +22,7 @@ export const mdxComponents: MDXComponents = {
   h3: ({ children, id }) => (
     <h3
       id={id}
-      className="scroll-mt-20 mb-1 text-[16px] font-semibold tracking-tight text-[var(--color-foreground)]"
+      className="scroll-mt-20 mb-1 text-[15px] font-semibold tracking-tight text-[var(--color-foreground)] sm:text-[16px]"
     >
       {children}
     </h3>
@@ -92,8 +92,8 @@ export const mdxComponents: MDXComponents = {
 
   // Tables — used for prop references in markdown.
   table: ({ children }) => (
-    <div className="overflow-hidden rounded-xl border border-[var(--color-site-border)] text-[13px]">
-      <table className="w-full">{children}</table>
+    <div className="overflow-x-auto rounded-xl border border-[var(--color-site-border)] text-[12.5px] sm:text-[13px]">
+      <table className="min-w-full">{children}</table>
     </div>
   ),
 

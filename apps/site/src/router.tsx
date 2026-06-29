@@ -41,14 +41,14 @@ function RootShell() {
         className="sticky top-0 z-50 border-b border-[var(--color-site-border)] bg-[var(--color-site-bg)]/90 backdrop-blur-lg"
         style={{ viewTransitionName: "site-header" }}
       >
-        <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center justify-between px-6">
+        <div className="mx-auto flex h-auto w-full max-w-[1200px] flex-col gap-3 px-4 py-3 sm:h-14 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-0">
           <Link
             to="/"
             className="text-[15px] font-semibold tracking-tight text-[var(--color-foreground)] transition-opacity hover:opacity-70"
           >
             Ezlet
           </Link>
-          <nav className="flex items-center gap-6">
+          <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-6">
             <a
               href="https://github.com/gustavowlima/ezlet"
               target="_blank"
@@ -90,11 +90,11 @@ function NavLink({ to, children }: { to: string; children: ReactNode }) {
 function DocsLayout() {
   return (
     <div
-      className="mx-auto flex w-full max-w-[1200px] items-start px-6"
+      className="mx-auto flex w-full max-w-[1200px] flex-col px-4 sm:px-6 lg:flex-row lg:items-start"
       style={{ viewTransitionName: "docs-layout" }}
     >
-      <aside className="sticky top-14 w-[220px] shrink-0 self-start py-10 pr-6">
-        <div className="max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+      <aside className="w-full border-b border-[var(--color-site-border)] py-6 lg:sticky lg:top-14 lg:w-[220px] lg:shrink-0 lg:self-start lg:border-b-0 lg:py-10 lg:pr-6">
+        <div className="max-h-none overflow-visible lg:max-h-[calc(100vh-3.5rem)] lg:overflow-y-auto">
           <SideSection label="Basics">
             <SideLink to="/docs" exact>
               Kickstart
@@ -112,8 +112,8 @@ function DocsLayout() {
           </SideSection>
         </div>
       </aside>
-      <div className="w-px shrink-0 bg-[var(--color-site-border)]" />
-      <section className="min-w-0 flex-1 py-10 pl-10">
+      <div className="hidden w-px shrink-0 bg-[var(--color-site-border)] lg:block" />
+      <section className="min-w-0 flex-1 py-8 lg:py-10 lg:pl-10">
         <Outlet />
       </section>
     </div>
@@ -149,10 +149,12 @@ function SideLink({ to, children, exact = false }: { to: string; children: React
 
 function DocsMdxPage({ Component, meta }: { Component: ComponentType; meta: DocMeta }) {
   return (
-    <article className="max-w-[700px] space-y-8">
+    <article className="max-w-none space-y-8 lg:max-w-[700px]">
       <header className="space-y-2">
-        <h1 className="text-[26px] font-bold tracking-tight text-[var(--color-foreground)]">{meta.title}</h1>
-        <p className="max-w-[62ch] text-[15px] leading-[1.55] text-[var(--color-muted-foreground)]">
+        <h1 className="text-[22px] font-bold tracking-tight text-[var(--color-foreground)] sm:text-[26px]">
+          {meta.title}
+        </h1>
+        <p className="max-w-[62ch] text-[14px] leading-[1.6] text-[var(--color-muted-foreground)] sm:text-[15px] sm:leading-[1.55]">
           {meta.description}
         </p>
       </header>

@@ -553,13 +553,13 @@ toast.error("Payment failed", {
 
   return (
     <>
-      <div className="min-h-[calc(100dvh-3.5rem)] px-6 py-12">
+      <div className="min-h-[calc(100dvh-3.5rem)] px-4 py-8 sm:px-6 sm:py-12">
         <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-8">
           <header className="flex max-w-[680px] flex-col gap-2">
-            <h1 className="text-[clamp(36px,8vw,52px)] font-bold tracking-[-0.03em] leading-none text-[var(--color-foreground)]">
+            <h1 className="text-[36px] font-bold leading-none tracking-[-0.03em] text-[var(--color-foreground)] sm:text-[44px] lg:text-[52px]">
               Playground.
             </h1>
-            <p className="text-[15px] text-[var(--color-muted-foreground)] leading-relaxed">
+            <p className="text-[14px] leading-relaxed text-[var(--color-muted-foreground)] sm:text-[15px]">
               Dynamic Island-style toasts. Morphing pill, spring physics, Sonner stacking.
             </p>
           </header>
@@ -618,7 +618,7 @@ toast.error("Payment failed", {
 
               <section className="flex flex-col gap-3">
                 <Label>Position</Label>
-                <div className="grid grid-cols-3 gap-1.5">
+                <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                   {positions.map((pos) => (
                     <Button
                       key={pos}
@@ -704,7 +704,7 @@ toast.error("Payment failed", {
 
           <Divider />
 
-          <footer className="flex items-center justify-between">
+          <footer className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-[12px] text-[var(--color-muted-foreground)]/40">MIT License</span>
           </footer>
         </div>
@@ -755,8 +755,13 @@ function PlaygroundCodePanel({
   return (
     <aside className="min-w-0 lg:sticky lg:top-20">
       <div className="overflow-hidden rounded-xl border border-[var(--color-site-border)] bg-[var(--color-card)]">
-        <div className="flex items-center justify-between gap-3 border-b border-[var(--color-site-border)] px-4">
-          <Tabs value={activeTab} onValueChange={onTabChange} variant="underline">
+        <div className="flex flex-col gap-3 border-b border-[var(--color-site-border)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <Tabs
+            value={activeTab}
+            onValueChange={onTabChange}
+            variant="underline"
+            className="w-full overflow-hidden sm:w-auto"
+          >
             <TabsList className="border-b-0">
               <TabsTrigger value="action" className="text-[13px]">
                 Action
@@ -770,7 +775,7 @@ function PlaygroundCodePanel({
             </TabsList>
           </Tabs>
 
-          <Button variant="ghost" size="sm" onClick={copyActiveCode} className="shrink-0">
+          <Button variant="ghost" size="sm" onClick={copyActiveCode} className="w-full shrink-0 sm:w-auto">
             <CopyIcon />
             Copy
           </Button>
@@ -923,7 +928,7 @@ function SliderCard({
 
 function ProgressBar({ value, speed, color }: { value: number; speed: string; color: string }) {
   return (
-    <div className="flex flex-col gap-1.5 w-44 mt-1">
+    <div className="mt-1 flex w-full max-w-44 flex-col gap-1.5">
       <div className="flex justify-between text-[10px] text-white/35 font-mono">
         <span>{value}%</span>
         <span>{speed}</span>
