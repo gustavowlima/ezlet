@@ -196,6 +196,7 @@ export function Toaster({
                   renderToast={renderToast}
                   stacked={index > 0}
                   transition={transition}
+                  expanded={expanded}
                 />
               </motion.div>
             );

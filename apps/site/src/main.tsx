@@ -141,7 +141,10 @@ export function App() {
   }
 
   function downloadDemo() {
-    const id = toast.loading("Requesting server…", { description: "Connecting for database.sql…" });
+    const id = toast.loading("Requesting server…", {
+      description: "Connecting for database.sql…",
+      icon: <CircularProgress value={0} />,
+    });
     let p = 0;
     const iv = setInterval(() => {
       p += 10;
@@ -152,6 +155,7 @@ export function App() {
           description: "database.sql is ready.",
           variant: "success",
           duration: 5000,
+          icon: undefined,
           action: {
             label: "Open File",
             onClick: () => {
@@ -163,6 +167,7 @@ export function App() {
       } else {
         toast.update(id, {
           title: "Downloading database.sql",
+          icon: <CircularProgress value={p} />,
           description: <ProgressBar value={p} speed="4.8 MB/s" color="bg-indigo-500" />,
         });
       }
@@ -429,7 +434,7 @@ export function App() {
 
 toast.update(id, {
   title: "Uploading document.pdf",
-  description: <ProgressBar value={45} speed="12.4 MB/s" />,
+  description: <ProgressBar value={45} speed="12.4 MB/s" color="bg-blue-500" />,
 });
 
 toast.update(id, {
@@ -446,12 +451,20 @@ toast.update(id, {
       fn: downloadDemo,
       code: `const id = toast.loading("Requesting server…", {
   description: "Connecting for database.sql…",
+  icon: <CircularProgress value={0} />,
+});
+
+toast.update(id, {
+  title: "Downloading database.sql",
+  icon: <CircularProgress value={45} />,
+  description: <ProgressBar value={45} speed="4.8 MB/s" color="bg-indigo-500" />,
 });
 
 toast.update(id, {
   title: "Download complete!",
   description: "database.sql is ready.",
   variant: "success",
+  icon: undefined,
   action: {
     label: "Open File",
     onClick: () => toast.dismiss(id),
@@ -928,6 +941,44 @@ function SliderCard({
         </span>
       </div>
       <RangeSlider value={value} min={min} max={max} step={1} onValueChange={onChange} aria-label={label} />
+    </div>
+  );
+}
+
+function CircularProgress({ value, color = "stroke-indigo-500" }: { value: number; color?: string }) {
+  const radius = 12;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (value / 100) * circumference;
+
+  return (
+    <div className="relative flex items-center justify-center size-8 shrink-0">
+      <svg className="size-full -rotate-90" viewBox="0 0 32 32">
+        <circle
+          cx="16"
+          cy="16"
+          r={radius}
+          stroke="currentColor"
+          strokeWidth="3"
+          fill="transparent"
+          className="text-white/10"
+        />
+        <circle
+          cx="16"
+          cy="16"
+          r={radius}
+          stroke="currentColor"
+          strokeWidth="3"
+          fill="transparent"
+          strokeDasharray={circumference}
+          style={{
+            strokeDashoffset: offset,
+            transition: "stroke-dashoffset 0.3s ease",
+          }}
+          strokeLinecap="round"
+          className={color}
+        />
+      </svg>
+      <span className="absolute text-[8px] font-bold text-white/90 leading-none">{value}%</span>
     </div>
   );
 }

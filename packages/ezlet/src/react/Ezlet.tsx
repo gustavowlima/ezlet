@@ -15,6 +15,7 @@ interface EzletProps {
   stacked?: boolean;
   onHeight?: (id: ToastId, height: number) => void;
   transition?: ToasterTransition;
+  expanded?: boolean;
 }
 
 function useMeasuredSize() {
@@ -69,6 +70,7 @@ export function Ezlet({
   stacked,
   onHeight,
   transition,
+  expanded: expandedProp,
 }: EzletProps) {
   const shouldReduceMotion = useReducedMotion();
   const shellRef = useRef<HTMLDivElement>(null);
@@ -101,7 +103,7 @@ export function Ezlet({
     };
   }, [collapsedLayer, isTest]);
 
-  const expanded = !collapsedLayer && (autoExpanded || hovered);
+  const expanded = !collapsedLayer && (expandedProp || autoExpanded || hovered);
 
   // Report the pill's real height so the toaster can lay out the expanded list.
   useEffect(() => {
