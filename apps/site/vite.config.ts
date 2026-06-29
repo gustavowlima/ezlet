@@ -40,6 +40,9 @@ export default defineConfig({
       "@": path.resolve(rootDir, "src"),
     },
   },
+  optimizeDeps: {
+    exclude: ["ezlet"],
+  },
   server: {
     fs: { allow: [path.resolve(rootDir, "../..")] },
   },
