@@ -26,6 +26,13 @@ export const expandSpring: Transition = {
   duration: 0.62,
 };
 
+/** Exit is quicker than entry and never overshoots. */
+export const exitSpring: Transition = {
+  type: "spring",
+  bounce: 0,
+  duration: 0.4,
+};
+
 /** Crossfade/blur swap of the inner content. */
 export const contentSpring: Transition = {
   type: "spring",

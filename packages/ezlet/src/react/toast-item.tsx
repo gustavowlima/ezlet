@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 import { contentSpring, iconSpring } from "../animation/springs";
 import { toast } from "../core/toast";
@@ -65,8 +65,12 @@ interface ToastItemProps {
   stacked?: boolean;
   transition?: ToasterTransition;
   expanded?: boolean;
-  expandedContentVisible?: boolean;
 }
+
+// Expanded content stays in flow so the shell measures its final size once and morphs to it.
+// It fades in while the shell grows and fades out (faster) before the shell shrinks.
+const revealTransition = { duration: 0.24, delay: 0.1, ease: "easeOut" } as const;
+const hideTransition = { duration: 0.12, ease: "easeIn" } as const;
 
 export function ToastItem({
   item,
@@ -77,15 +81,12 @@ export function ToastItem({
   stacked,
   transition,
   expanded = false,
-  expandedContentVisible = false,
 }: ToastItemProps) {
-  const reduce = useReducedMotion();
   const role = item.variant === "error" ? "alert" : "status";
   const title = renderMessage(item.title);
   const description = renderMessage(item.description);
   const hasDescription = description !== null;
   const isExpanded = expanded;
-  const revealExpandedContent = reduce || expandedContentVisible || !isExpanded;
   const contentTransition = transition?.morph ?? contentSpring;
 
   const customContent = item.render?.({
@@ -138,130 +139,39 @@ export function ToastItem({
       tabIndex={item.dismissible ? 0 : undefined}
     >
       {hasCustomContent ? (
-        <motion.div
-          animate={reduce ? undefined : { scale: 1, opacity: 1 }}
-          className={cx("ezlet-custom-content", classNames?.content)}
-          initial={reduce ? false : { scale: 0.96, opacity: 0 }}
-          key={item.id}
-          transition={transition?.morph ?? { type: "spring", bounce: 0.15, duration: 0.5 }}
-        >
-          {customContent}
-        </motion.div>
+        <div className={cx("ezlet-custom-content", classNames?.content)}>{customContent}</div>
       ) : (
         <>
           <motion.div
-            animate={reduce ? undefined : { scale: 1, opacity: 1 }}
+            layout="position"
+            animate={{ scale: 1, opacity: 1 }}
             className={cx("ezlet-icon", classNames?.icon)}
-            initial={reduce ? false : { scale: 0.7, opacity: 0 }}
+            initial={{ scale: 0.7, opacity: 0 }}
             // Re-pop the icon whenever the variant changes (loading → success…).
             key={item.variant}
-            transition={iconTransition}
+            // Pop with the icon spring; re-center with the same spring as the copy so both move together.
+            transition={{ ...iconTransition, layout: contentTransition }}
           >
             {getDefaultIcon(item, icons)}
           </motion.div>
+          {/* Position-only layout: slides the copy when the row re-centers, never scales text. */}
           <motion.div
-            layout
-            animate={reduce ? undefined : { scale: 1, opacity: 1 }}
+            layout="position"
             className={cx("ezlet-content", classNames?.content)}
-            initial={reduce ? false : { scale: 0.96, opacity: 0 }}
-            key={item.id}
-            transition={transition?.morph ?? { type: "spring", bounce: 0.15, duration: 0.5 }}
+            transition={contentTransition}
           >
-            <motion.div layout className="ezlet-copy">
-              {title !== null ? (
-                <motion.div
-                  layout
-                  initial={false}
-                  animate={reduce ? undefined : { opacity: isExpanded ? 0.96 : 1, y: isExpanded ? -1 : 0 }}
-                  className={cx("ezlet-title", classNames?.title)}
-                  transition={contentTransition}
-                >
-                  {title}
-                </motion.div>
-              ) : null}
-            </motion.div>
-            <AnimatePresence>
+            <div className="ezlet-copy">
+              {title !== null ? <div className={cx("ezlet-title", classNames?.title)}>{title}</div> : null}
+            </div>
+            {/* popLayout: the exiting description leaves the flow right away, so the title
+                re-centers in the same render Motion measures and slides instead of snapping. */}
+            <AnimatePresence initial={false} mode="popLayout">
               {hasDescription && isExpanded ? (
                 <motion.div
-                  layout
-                  initial={
-                    reduce
-                      ? false
-                      : {
-                          opacity: 0,
-                          filter: "blur(6px)",
-                          y: -8,
-                          scale: 0.98,
-                          height: 0,
-                          marginTop: 0,
-                        }
-                  }
-                  animate={
-                    reduce
-                      ? undefined
-                      : {
-                          opacity: revealExpandedContent ? 1 : 0,
-                          filter: revealExpandedContent ? "blur(0px)" : "blur(6px)",
-                          y: revealExpandedContent ? 0 : -8,
-                          scale: revealExpandedContent ? 1 : 0.98,
-                          height: revealExpandedContent ? "auto" : 0,
-                          marginTop: revealExpandedContent ? 2 : 0,
-                        }
-                  }
-                  exit={
-                    reduce
-                      ? undefined
-                      : {
-                          opacity: 0,
-                          filter: "blur(6px)",
-                          y: -8,
-                          scale: 0.98,
-                          height: 0,
-                          marginTop: 0,
-                        }
-                  }
-                  transition={{
-                    opacity: {
-                      delay: revealExpandedContent ? 0.18 : 0,
-                      duration: revealExpandedContent ? 0.25 : 0.15,
-                      ease: "easeOut",
-                    },
-                    filter: {
-                      delay: revealExpandedContent ? 0.18 : 0,
-                      duration: revealExpandedContent ? 0.25 : 0.15,
-                      ease: "easeOut",
-                    },
-                    y: {
-                      type: "spring",
-                      bounce: 0.1,
-                      duration: revealExpandedContent ? 0.45 : 0.22,
-                      delay: revealExpandedContent ? 0.18 : 0,
-                    },
-                    scale: {
-                      type: "spring",
-                      bounce: 0,
-                      duration: revealExpandedContent ? 0.4 : 0.22,
-                      delay: revealExpandedContent ? 0.18 : 0,
-                    },
-                    height: {
-                      type: "spring",
-                      bounce: 0,
-                      duration: revealExpandedContent ? 0.38 : 0.25,
-                      delay: revealExpandedContent ? 0.04 : 0.08,
-                    },
-                    marginTop: {
-                      type: "spring",
-                      bounce: 0,
-                      duration: revealExpandedContent ? 0.38 : 0.25,
-                      delay: revealExpandedContent ? 0.04 : 0.08,
-                    },
-                  }}
-                  aria-hidden={!revealExpandedContent}
+                  initial={{ opacity: 0, filter: "blur(6px)", y: -4 }}
+                  animate={{ opacity: 1, filter: "blur(0px)", y: 0, transition: revealTransition }}
+                  exit={{ opacity: 0, filter: "blur(4px)", y: -4, transition: hideTransition }}
                   className={cx("ezlet-description", classNames?.description)}
-                  style={{
-                    pointerEvents: revealExpandedContent ? "auto" : "none",
-                    overflow: "hidden",
-                  }}
                 >
                   {description}
                 </motion.div>
@@ -270,45 +180,17 @@ export function ToastItem({
           </motion.div>
         </>
       )}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {!hasCustomContent && isExpanded && (item.action || item.dismissible) ? (
           <motion.div
-            layout
-            initial={false}
-            animate={
-              reduce
-                ? undefined
-                : {
-                    opacity: revealExpandedContent ? 1 : 0,
-                    filter: revealExpandedContent ? "blur(0px)" : "blur(4px)",
-                    scale: revealExpandedContent ? 1 : 0.96,
-                  }
-            }
-            exit={
-              reduce
-                ? undefined
-                : {
-                    opacity: 0,
-                    filter: "blur(4px)",
-                    y: -2,
-                    scale: 0.96,
-                  }
-            }
-            transition={{
-              ...contentTransition,
-              delay: revealExpandedContent ? 0.08 : 0,
-              opacity: { duration: 0.22 },
-              filter: { duration: 0.22 },
-              y: { type: "spring", bounce: 0.04, duration: 0.3 },
-              scale: { type: "spring", bounce: 0.04, duration: 0.3 },
-            }}
-            aria-hidden={!revealExpandedContent}
+            initial={{ opacity: 0, filter: "blur(4px)", scale: 0.96 }}
+            animate={{ opacity: 1, filter: "blur(0px)", scale: 1, transition: revealTransition }}
+            exit={{ opacity: 0, filter: "blur(4px)", scale: 0.96, transition: hideTransition }}
             style={{
               display: "flex",
               alignItems: "center",
               gap: 8,
               overflow: "hidden",
-              pointerEvents: revealExpandedContent ? "auto" : "none",
               whiteSpace: "nowrap",
             }}
             className="ezlet-buttons-group"
@@ -322,27 +204,16 @@ export function ToastItem({
                 {item.action.label}
               </button>
             )}
-            <AnimatePresence>
-              {item.dismissible ? (
-                <motion.button
-                  initial={false}
-                  animate={
-                    reduce
-                      ? undefined
-                      : { opacity: revealExpandedContent ? 1 : 0, scale: revealExpandedContent ? 1 : 0.85 }
-                  }
-                  exit={reduce ? undefined : { opacity: 0, scale: 0.85 }}
-                  transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                  style={{ overflow: "hidden", whiteSpace: "nowrap" }}
-                  aria-label="Dismiss toast"
-                  className={cx("ezlet-dismiss", classNames?.dismissButton)}
-                  onClick={() => toast.dismiss(item.id)}
-                  type="button"
-                >
-                  <CloseIcon />
-                </motion.button>
-              ) : null}
-            </AnimatePresence>
+            {item.dismissible ? (
+              <button
+                aria-label="Dismiss toast"
+                className={cx("ezlet-dismiss", classNames?.dismissButton)}
+                onClick={() => toast.dismiss(item.id)}
+                type="button"
+              >
+                <CloseIcon />
+              </button>
+            ) : null}
           </motion.div>
         ) : null}
       </AnimatePresence>

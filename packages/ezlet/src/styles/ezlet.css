@@ -227,6 +227,7 @@
 }
 
 .ezlet-content {
+  position: relative; /* anchors the description popped out of flow while it exits */
   min-width: 0;
 }
 
@@ -257,7 +258,8 @@
 }
 
 .ezlet-description {
-  margin-top: 2px;
+  /* padding, not margin: popLayout positions the exiting node from offsetTop and a margin would shift it */
+  padding-top: 2px;
   color: var(--ezlet-muted);
   font-size: 12px;
   line-height: 1.25;

@@ -1,8 +1,8 @@
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { getStackTransform } from "../animation/geometry";
-import { expandSpring, reducedMotionTransition, stackSpring } from "../animation/springs";
+import { exitSpring, expandSpring, reducedMotionTransition, stackSpring } from "../animation/springs";
 import { toast } from "../core/toast";
 import type { ToasterProps, ToastId, ToastT } from "../core/types";
 import { cx } from "../styles/utils";
@@ -44,6 +44,7 @@ export function Toaster({
   const expanded = expand || hovered;
   const stackTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.stack ?? stackSpring);
   const itemTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.expand ?? expandSpring);
+  const exitTransition = shouldReduceMotion ? reducedMotionTransition : (transition?.expand ?? exitSpring);
   const visible = useMemo(() => getVisibleToasts(toasts, visibleToasts), [toasts, visibleToasts]);
 
   const reportHeight = useCallback((id: ToastId, height: number) => {
@@ -127,72 +128,75 @@ export function Toaster({
       aria-label="Notifications"
       style={{ "--ezlet-offset": `${offset}px` } as React.CSSProperties}
     >
-      <motion.div
-        className={cx("ezlet-viewport", classNames?.viewport)}
-        data-ezlet-viewport=""
-        animate={{ height: viewportHeight }}
-        transition={stackTransition}
-      >
-        <AnimatePresence>
-          {visible.map((item, index) => {
-            // Cumulative measured height of every toast in front of this one.
-            let heightBefore = 0;
-            for (let i = 0; i < index; i += 1) {
-              const prevItem = visible[i];
-              if (prevItem) {
-                heightBefore += heightOf(prevItem.id);
+      {/* "user": honors prefers-reduced-motion for every transform/layout animation below. */}
+      <MotionConfig reducedMotion="user">
+        <motion.div
+          className={cx("ezlet-viewport", classNames?.viewport)}
+          data-ezlet-viewport=""
+          animate={{ height: viewportHeight }}
+          transition={stackTransition}
+        >
+          <AnimatePresence>
+            {visible.map((item, index) => {
+              // Cumulative measured height of every toast in front of this one.
+              let heightBefore = 0;
+              for (let i = 0; i < index; i += 1) {
+                const prevItem = visible[i];
+                if (prevItem) {
+                  heightBefore += heightOf(prevItem.id);
+                }
               }
-            }
 
-            const transform = getStackTransform({
-              index,
-              expanded,
-              position: verticalSide,
-              heightBefore,
-              gap,
-              peek: PEEK,
-            });
+              const transform = getStackTransform({
+                index,
+                expanded,
+                position: verticalSide,
+                heightBefore,
+                gap,
+                peek: PEEK,
+              });
 
-            // Dynamic Island-style expand: the pill grows out of the anchored edge
-            // (transform-origin top/bottom) from scale 0.6, with a small nudge +
-            // fade, and collapses back the same way on exit.
-            const enterY = transform.y + (verticalSide === "top" ? -8 : 8);
+              // Dynamic Island-style expand: the pill grows out of the anchored edge
+              // (transform-origin top/bottom) from scale 0.6, with a small nudge +
+              // fade, and collapses back the same way on exit.
+              const enterY = transform.y + (verticalSide === "top" ? -8 : 8);
 
-            return (
-              <motion.div
-                key={item.id}
-                className={cx(
-                  "ezlet-stack-item",
-                  !expanded && index > 0 ? "ezlet-stack-item-collapsed" : "ezlet-stack-item-active",
-                )}
-                initial={{ y: enterY, opacity: 0, scale: 0.6 }}
-                animate={{
-                  y: transform.y,
-                  opacity: transform.opacity,
-                  scale: transform.scale,
-                }}
-                exit={{ y: enterY, opacity: 0, scale: 0.6 }}
-                data-front={index === 0 ? "true" : "false"}
-                data-stack-index={index}
-                style={{ zIndex: transform.zIndex }}
-                transition={itemTransition}
-              >
-                <Ezlet
-                  classNames={classNames}
-                  collapsedLayer={!expanded && index > 0}
-                  icons={icons}
-                  item={item}
-                  onHeight={reportHeight}
-                  renderToast={renderToast}
-                  stacked={index > 0}
-                  transition={transition}
-                  expanded={expanded}
-                />
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </motion.div>
+              return (
+                <motion.div
+                  key={item.id}
+                  className={cx(
+                    "ezlet-stack-item",
+                    !expanded && index > 0 ? "ezlet-stack-item-collapsed" : "ezlet-stack-item-active",
+                  )}
+                  initial={{ y: enterY, opacity: 0, scale: 0.6 }}
+                  animate={{
+                    y: transform.y,
+                    opacity: transform.opacity,
+                    scale: transform.scale,
+                  }}
+                  exit={{ y: enterY, opacity: 0, scale: 0.6, transition: exitTransition }}
+                  data-front={index === 0 ? "true" : "false"}
+                  data-stack-index={index}
+                  style={{ zIndex: transform.zIndex }}
+                  transition={itemTransition}
+                >
+                  <Ezlet
+                    classNames={classNames}
+                    collapsedLayer={!expanded && index > 0}
+                    icons={icons}
+                    item={item}
+                    onHeight={reportHeight}
+                    renderToast={renderToast}
+                    stacked={index > 0}
+                    transition={transition}
+                    expanded={expanded}
+                  />
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
+      </MotionConfig>
     </section>,
     document.body,
   );

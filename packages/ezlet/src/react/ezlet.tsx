@@ -19,7 +19,7 @@ interface EzletProps {
   expanded?: boolean;
 }
 
-const EXPANDED_CONTENT_REVEAL_MS = 260;
+const IS_TEST = typeof process !== "undefined" && process.env.NODE_ENV === "test";
 
 function useMeasuredSize() {
   const ref = useRef<HTMLDivElement>(null);
@@ -75,54 +75,27 @@ export function Ezlet({
   const shellRef = useRef<HTMLDivElement>(null);
   const [sizerRef, size] = useMeasuredSize();
 
-  const isTest = typeof process !== "undefined" && process.env.NODE_ENV === "test";
   const [hovered, setHovered] = useState(false);
-  const [autoExpanded, setAutoExpanded] = useState(isTest);
-  const [expandedContentVisible, setExpandedContentVisible] = useState(isTest);
+  const [autoExpanded, setAutoExpanded] = useState(IS_TEST);
+  const [swipeX, setSwipeX] = useState(0);
 
+  // Peek open once after mount. Not keyed on `collapsedLayer`: re-running would re-peek every
+  // time the toast moves in the stack, and clearing midway could leave it stuck open.
   useEffect(() => {
-    if (isTest) {
+    if (IS_TEST) {
       return;
     }
 
-    if (collapsedLayer) {
-      return;
-    }
-
-    const expandTimer = setTimeout(() => {
-      setAutoExpanded(true);
-    }, 350);
-
-    const collapseTimer = setTimeout(() => {
-      setAutoExpanded(false);
-    }, 2850);
+    const expandTimer = setTimeout(() => setAutoExpanded(true), 350);
+    const collapseTimer = setTimeout(() => setAutoExpanded(false), 2850);
 
     return () => {
       clearTimeout(expandTimer);
       clearTimeout(collapseTimer);
     };
-  }, [collapsedLayer, isTest]);
+  }, []);
 
   const expanded = !collapsedLayer && (expandedProp || autoExpanded || hovered);
-
-  useEffect(() => {
-    if (!expanded) {
-      setExpandedContentVisible(false);
-      return;
-    }
-
-    if (shouldReduceMotion || isTest) {
-      setExpandedContentVisible(true);
-      return;
-    }
-
-    setExpandedContentVisible(false);
-    const revealTimer = setTimeout(() => {
-      setExpandedContentVisible(true);
-    }, EXPANDED_CONTENT_REVEAL_MS);
-
-    return () => clearTimeout(revealTimer);
-  }, [expanded, isTest, shouldReduceMotion]);
 
   // Report the pill's real height so the toaster can lay out the expanded list.
   useEffect(() => {
@@ -159,6 +132,7 @@ export function Ezlet({
             ...baseTransition,
             delay: 0,
           },
+          x: { type: "spring", bounce: 0, duration: 0.35 },
         };
   const contentKey = `${item.variant}:${collapsedLayer ? "layer" : "full"}`;
 
@@ -177,9 +151,11 @@ export function Ezlet({
       drag={item.dismissible && !stacked ? "x" : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.18}
-      animate={size ? { width: size.width, height: size.height } : undefined}
+      animate={size ? { width: size.width, height: size.height, x: swipeX } : undefined}
       onDragEnd={(_, info) => {
         if (Math.abs(info.offset.x) > 80 || Math.abs(info.velocity.x) > 600) {
+          // Keep moving in the swipe direction instead of snapping back to the constraint.
+          setSwipeX(Math.sign(info.offset.x || info.velocity.x) * (size?.width ?? 360));
           toast.dismiss(item.id);
         }
       }}
@@ -202,7 +178,6 @@ export function Ezlet({
               classNames={classNames}
               collapsedLayer={collapsedLayer}
               expanded={expanded}
-              expandedContentVisible={expandedContentVisible}
               icons={icons}
               item={item}
               stacked={stacked}
