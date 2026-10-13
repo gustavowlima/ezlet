@@ -28,17 +28,27 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # `bun --cwd <dir> run <script>` prints help and exits 0 without running anything,
+      # which once shipped tarballs without dist/. Use working-directory instead.
       - name: Lint
-        run: bun --cwd packages/ezlet run lint
+        working-directory: packages/ezlet
+        run: bun run lint
 
       - name: Typecheck
-        run: bun --cwd packages/ezlet run typecheck
+        working-directory: packages/ezlet
+        run: bun run typecheck
 
       - name: Test
-        run: bun --cwd packages/ezlet test
+        working-directory: packages/ezlet
+        run: bun test
 
       - name: Build
-        run: bun --cwd packages/ezlet run build
+        working-directory: packages/ezlet
+        run: bun run build
+
+      - name: Verify build output
+        working-directory: packages/ezlet
+        run: test -f dist/index.js && test -f dist/index.d.ts && test -f dist/styles.css
 
       - name: Verify release tag matches package version
         env:
